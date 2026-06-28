@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>银龄AI 侧边栏</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* 头部 */
+    .sp-header {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      padding: 20px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .sp-header h1 { font-size: 18px; font-weight: 700; }
+    .sp-header p { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+
+    /* 标签导航 */
+    .sp-tabs {
+      display: flex;
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .sp-tab {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sp-tab.active {
+      color: #6366f1;
+      border-bottom-color: #6366f1;
+      font-weight: 600;
+    }
+
+    /* 内容区 */
+    .sp-content { padding: 16px; }
+    .sp-panel { display: none; }
+    .sp-panel.active { display: block; }
+
+    /* 搜索框 */
+    .sp-search {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .sp-search input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+    .sp-search input:focus { border-color: #6366f1; }
+    .sp-search button {
+      padding: 10px 14px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* 匹配表单 */
+    .sp-form { margin-bottom: 16px; }
+    .sp-form-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .sp-form-row label {
+      display: block;
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .sp-form-row input, .sp-form-row select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    .sp-form-row input:focus, .sp-form-row select:focus { border-color: #6366f1; }
+    .sp-form-group { flex: 1; }
+
+    .sp-btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .sp-btn-primary:hover { background: #4f46e5; }
+
+    /* 结果卡片 */
+    .sp-result {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .sp-result h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1e293b;
+    }
+    .sp-result .sp-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #ede9fe;
+      color: #6366f1;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+    .sp-result p {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+    .sp-result .sp-match-score {
+      font-size: 12px;
+      color: #059669;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .sp-empty {
+      text-align: center;
+      color: #94a3b8;
+      padding: 40px 20px;
+      font-size: 14px;
+    }
+
+    /* 底部链接 */
+    .sp-footer {
+      padding: 16px;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 16px;
+    }
+    .sp-footer a {
+      color: #6366f1;
+      font-size: 13px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 头部 -->
+  <div class="sp-header">
+    <h1>银龄AI 助手</h1>
+    <p>养老政策查询 | 补贴匹配 | 健康摘要</p>
+  </div>
+
+  <!-- 标签 -->
+  <div class="sp-tabs">
+    <div class="sp-tab active" data-tab="policies">政策查询</div>
+    <div class="sp-tab" data-tab="subsidy">补贴匹配</div>
+    <div class="sp-tab" data-tab="about">关于</div>
+  </div>
+
+  <!-- 内容 -->
+  <div class="sp-content">
+    <!-- 政策查询面板 -->
+    <div class="sp-panel active" id="panel-policies">
+      <div class="sp-search">
+        <input type="text" id="policySearch" placeholder="搜索政策,如: 高龄补贴、长护险" />
+        <button id="policySearchBtn">搜索</button>
+      </div>
+      <div id="policyResults">
+        <div class="sp-empty">输入关键词搜索养老政策</div>
+      </div>
+    </div>
+
+    <!-- 补贴匹配面板 -->
+    <div class="sp-panel" id="panel-subsidy">
+      <div class="sp-form">
+        <div class="sp-form-row">
+          <div class="sp-form-group">
+            <label>年龄</label>
+            <input type="number" id="matchAge" placeholder="如: 80" min="0" max="120" />
+          </div>
+          <div class="sp-form-group">
+            <label>城市</label>
+            <input type="text" id="matchCity" placeholder="如: 北京" />
+          </div>
+        </div>
+        <div class="sp-form-row">
+          <div class="sp-form-group">
+            <label>护理等级</label>
+            <select id="matchCareLevel">
+              <option value="">请选择</option>
+              <option value="independent">自理</option>
+              <option value="semi_dependent">半失能</option>
+              <option value="dependent">失能</option>
+              <option value="critical">危重</option>
+            </select>
+          </div>
+        </div>
+        <button class="sp-btn-primary" id="matchBtn">开始匹配</button>
+      </div>
+      <div id="matchResults">
+        <div class="sp-empty">填写信息后点击"开始匹配"</div>
+      </div>
+    </div>
+
+    <!-- 关于面板 -->
+    <div class="sp-panel" id="panel-about">
+      <div class="sp-result">
+        <h3>衍策银龄 AI</h3>
+        <p>中国老龄化社会 AI 服务引擎 v0.1.0</p>
+        <p style="margin-top: 8px;">
+          <span class="sp-tag">政策匹配</span>
+          <span class="sp-tag">健康摘要</span>
+          <span class="sp-tag">风险评估</span>
+          <span class="sp-tag">机构推荐</span>
+          <span class="sp-tag">家属报告</span>
+        </p>
+        <p style="margin-top: 12px; font-size: 12px; color: #94a3b8;">
+          本平台利用 AI 技术为养老服务机构和家庭提供智能化服务支持。政策匹配结果仅供参考,具体以当地主管部门审核为准。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div class="sp-footer">
+    <a href="http://localhost:3000" target="_blank">访问衍策银龄 AI 完整平台 →</a>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

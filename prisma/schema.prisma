@@ -1,0 +1,661 @@
+// ═══════════════════════════════════════════════
+// 衍策银龄 AI — 数据库模型定义
+// Aging AI Engine Prisma Schema
+// 数据库: PostgreSQL
+// ═══════════════════════════════════════════════
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── 枚举类型 ───────────────────────────────
+
+/// 用户角色
+enum UserRole {
+  ADMIN    // 管理员
+  OPERATOR // 运营人员
+  CAREGIVER // 护理员
+  FAMILY   // 家属
+  VIEWER   // 查看者
+}
+
+/// 机构类型
+enum OrganizationType {
+  NURSING_HOME      // 养老院
+  COMMUNITY_STATION // 社区养老服务站
+  CARE_COMPANY      // 护理公司
+  HOSPITAL          // 医院
+  GOVERNMENT        // 政府机构
+  ENTERPRISE        // 企业
+}
+
+/// 性别
+enum Gender {
+  MALE   // 男
+  FEMALE // 女
+}
+
+/// 护理等级
+enum CareLevel {
+  INDEPENDENT    // 自理
+  SEMI_DEPENDENT // 半失能
+  DEPENDENT      // 失能
+  CRITICAL       // 危重
+}
+
+/// 服务类型（老人）
+enum ElderlyServiceType {
+  HOME      // 居家养老
+  COMMUNITY // 社区养老
+  INSTITUTION // 机构养老
+}
+
+/// 护理订单类型
+enum CareOrderType {
+  ESCORT        // 陪诊
+  NURSING       // 护理
+  REHABILITATION // 康复
+  COMPANION     // 陪伴
+  BATHING       // 助浴
+  MEAL          // 助餐
+  CLEANING      // 保洁
+}
+
+/// 护理订单状态
+enum CareOrderStatus {
+  PENDING     // 待确认
+  CONFIRMED   // 已确认
+  IN_PROGRESS // 进行中
+  COMPLETED   // 已完成
+  CANCELLED   // 已取消
+}
+
+/// 风险标记类型
+enum RiskFlagType {
+  FALL        // 跌倒
+  MEDICATION  // 用药
+  VITAL       // 生命体征
+  BEHAVIOR    // 行为
+  NUTRITION   // 营养
+  OTHER       // 其他
+}
+
+/// 风险等级
+enum RiskLevel {
+  LOW      // 低
+  MEDIUM   // 中
+  HIGH     // 高
+  CRITICAL // 危
+}
+
+/// 风险事件严重程度
+enum RiskEventSeverity {
+  LOW    // 低
+  MEDIUM // 中
+  HIGH   // 高
+}
+
+/// 政策类别
+enum PolicyCategory {
+  SUBSIDY    // 补贴
+  INSURANCE  // 保险
+  SERVICE    // 服务
+  HOUSING    // 住房
+  MEDICAL    // 医疗
+  EMPLOYMENT // 就业
+  TAX        // 税收
+  OTHER      // 其他
+}
+
+/// 政策行政级别
+enum PolicyLevel {
+  NATIONAL   // 国家级
+  PROVINCIAL // 省级
+  MUNICIPAL  // 市级
+  DISTRICT   // 区级
+}
+
+/// 政策状态
+enum PolicyStatus {
+  ACTIVE  // 生效中
+  EXPIRED // 已过期
+  UPCOMING // 即将生效
+}
+
+/// 养老机构类型
+enum InstitutionType {
+  NURSING_HOME       // 养老院
+  COMMUNITY_DAY_CARE // 社区日间照料
+  HOME_CARE_AGENCY   // 居家护理机构
+  REHABILITATION_CENTER // 康复中心
+  HOSPICE            // 临终关怀
+  ASSISTED_LIVING    // 辅助生活
+}
+
+/// 数字化成熟度等级
+enum DigitalMaturityLevel {
+  L1 // 初始级
+  L2 // 基础级
+  L3 // 规范级
+  L4 // 优化级
+  L5 // 智能级
+}
+
+/// 价格单位
+enum PriceUnit {
+  MONTH // 月
+  DAY   // 天
+}
+
+/// 销售线索来源
+enum SalesLeadSource {
+  POLICY_SCAN // 政策扫描
+  WEB_CRAWL   // 网络爬取
+  REFERRAL    // 转介绍
+  EXHIBITION  // 展会
+  COLD_CALL   // 电话拓展
+}
+
+/// 销售线索状态
+enum SalesLeadStatus {
+  NEW         // 新线索
+  CONTACTED   // 已联系
+  QUALIFIED   // 已验证
+  PROPOSAL    // 方案阶段
+  NEGOTIATION // 谈判阶段
+  WON         // 已赢单
+  LOST        // 已丢单
+}
+
+/// 线索优先级
+enum SalesLeadPriority {
+  HIGH   // 高
+  MEDIUM // 中
+  LOW    // 低
+}
+
+/// Agent 任务类型
+enum AgentTaskType {
+  POLICY_MATCH         // 政策匹配
+  HEALTH_SUMMARY       // 健康摘要
+  SERVICE_REPORT       // 服务报告
+  RISK_ASSESSMENT      // 风险评估
+  INSTITUTION_RECOMMEND // 机构推荐
+  SUBSIDY_CHECK        // 补贴核查
+  FAMILY_REPORT        // 家属报告
+}
+
+/// Agent 任务状态
+enum AgentTaskStatus {
+  PENDING   // 待处理
+  RUNNING   // 运行中
+  COMPLETED // 已完成
+  FAILED    // 失败
+  REVIEW    // 待审核
+}
+
+// ─── 用户与组织 ───────────────────────────────
+
+/// 用户
+model User {
+  id             String   @id @default(cuid())
+  name           String   /// 姓名
+  phone          String   /// 手机号
+  email          String?  /// 邮箱
+  role           UserRole /// 角色
+  organizationId String   /// 所属组织 ID
+  avatar         String?  /// 头像 URL
+  createdAt      DateTime @default(now()) /// 创建时间
+  updatedAt      DateTime @updatedAt
+
+  // 关系
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([role])
+  @@map("users")
+}
+
+/// 组织
+model Organization {
+  id           String           @id @default(cuid())
+  name         String           /// 组织名称
+  type         OrganizationType /// 组织类型
+  address      String           /// 地址
+  city         String           /// 城市
+  province     String           /// 省份
+  contactName  String           /// 联系人姓名
+  contactPhone String           /// 联系人电话
+  licenseNo    String?          /// 营业执照号
+  createdAt    DateTime         @default(now()) /// 创建时间
+  updatedAt    DateTime         @updatedAt
+
+  // 关系
+  users         User[]
+  elderlyProfiles ElderlyProfile[]
+  careOrders    CareOrder[]
+
+  @@index([type])
+  @@index([province, city])
+  @@map("organizations")
+}
+
+// ─── 老人档案 ───────────────────────────────
+
+/// 老人档案
+model ElderlyProfile {
+  id             String              @id @default(cuid())
+  name           String              /// 姓名
+  gender         Gender              /// 性别
+  birthDate      DateTime            /// 出生日期
+  idCard         String?             /// 身份证号（敏感信息）
+  phone          String?             /// 手机号
+  address        String              /// 地址
+  city           String              /// 城市
+  province       String              /// 省份
+  careLevel      CareLevel           /// 护理等级
+  serviceType    ElderlyServiceType  /// 服务类型
+  tags           String[]            /// 标签
+  organizationId String              /// 所属组织 ID
+  createdAt      DateTime            @default(now()) /// 创建时间
+  updatedAt      DateTime            @updatedAt
+
+  // 关系
+  organization       Organization      @relation(fields: [organizationId], references: [id])
+  emergencyContact   EmergencyContact?
+  familyMembers      FamilyMember[]
+  healthSummary      HealthSummary?
+  medications        Medication[]
+  visitRecords       VisitRecord[]
+  riskFlags          RiskFlag[]
+  careOrders         CareOrder[]
+  medicationReminders MedicationReminder[]
+  followUpReminders  FollowUpReminder[]
+
+  @@index([organizationId])
+  @@index([careLevel])
+  @@index([province, city])
+  @@index([name])
+  @@map("elderly_profiles")
+}
+
+/// 紧急联系人
+model EmergencyContact {
+  id           String         @id @default(cuid())
+  name         String         /// 姓名
+  phone        String         /// 电话
+  relationship String         /// 关系
+  elderlyId    String         @unique /// 关联老人 ID
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@map("emergency_contacts")
+}
+
+/// 家庭成员
+model FamilyMember {
+  id           String  @id @default(cuid())
+  name         String  /// 姓名
+  relationship String  /// 关系（如子女、配偶）
+  phone        String  /// 电话
+  isPrimary    Boolean @default(false) /// 是否主要联系人
+  elderlyId    String  /// 关联老人 ID
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@index([elderlyId])
+  @@map("family_members")
+}
+
+/// 健康摘要
+model HealthSummary {
+  id               String   @id @default(cuid())
+  elderlyId        String   @unique /// 关联老人 ID
+  chronicDiseases  String[] /// 慢性病列表
+  allergies        String[] /// 过敏源列表
+  bloodType        String?  /// 血型
+  disabilityLevel  String?  /// 残疾等级
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@map("health_summaries")
+}
+
+/// 用药记录
+model Medication {
+  id                String    @id @default(cuid())
+  name              String    /// 药品名称
+  dosage            String    /// 剂量
+  frequency         String    /// 服用频率
+  startDate         DateTime  /// 开始日期
+  endDate           DateTime? /// 结束日期
+  prescribingDoctor String?   /// 处方医生
+  elderlyId         String    /// 关联老人 ID
+  createdAt         DateTime  @default(now())
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@index([elderlyId])
+  @@map("medications")
+}
+
+/// 就诊记录
+model VisitRecord {
+  id         String   @id @default(cuid())
+  date       DateTime /// 就诊日期
+  hospital   String   /// 医院名称
+  department String   /// 科室
+  diagnosis  String   /// 诊断
+  doctor     String   /// 医生姓名
+  notes      String?  /// 备注
+  elderlyId  String   /// 关联老人 ID
+  createdAt  DateTime @default(now())
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@index([elderlyId])
+  @@index([date])
+  @@map("visit_records")
+}
+
+/// 风险标记
+model RiskFlag {
+  id          String      @id @default(cuid())
+  type        RiskFlagType /// 风险类型
+  level       RiskLevel    /// 风险等级
+  description String       /// 风险描述
+  detectedAt  DateTime     @default(now()) /// 检测时间
+  resolvedAt  DateTime?    /// 解决时间
+  elderlyId   String       /// 关联老人 ID
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@index([elderlyId])
+  @@index([type, level])
+  @@index([resolvedAt])
+  @@map("risk_flags")
+}
+
+// ─── 陪诊服务 ───────────────────────────────
+
+/// 护理订单
+model CareOrder {
+  id             String          @id @default(cuid())
+  orderNo        String          @unique /// 订单编号
+  elderlyId      String          /// 关联老人 ID
+  elderlyName    String          /// 老人姓名（冗余）
+  type           CareOrderType   /// 订单类型
+  status         CareOrderStatus /// 订单状态
+  scheduledAt    DateTime        /// 预约时间
+  completedAt    DateTime?       /// 完成时间
+  caregiverId    String?         /// 护理员 ID
+  caregiverName  String?         /// 护理员姓名
+  location       String          /// 服务地点
+  notes          String?         /// 备注
+  familyNotified Boolean         @default(false) /// 是否通知家属
+  price          Float           /// 价格
+  organizationId String          /// 所属组织 ID
+  createdAt      DateTime        @default(now()) /// 创建时间
+  updatedAt      DateTime        @updatedAt
+
+  // 关系
+  elderly       ElderlyProfile @relation(fields: [elderlyId], references: [id])
+  organization  Organization   @relation(fields: [organizationId], references: [id])
+  riskEvents    RiskEvent[]
+  serviceReport ServiceReport?
+
+  @@index([elderlyId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([orderNo])
+  @@map("care_orders")
+}
+
+/// 风险事件
+model RiskEvent {
+  id          String            @id @default(cuid())
+  orderId     String            /// 关联订单 ID
+  type        String            /// 事件类型
+  description String            /// 事件描述
+  severity    RiskEventSeverity /// 严重程度
+  occurredAt  DateTime          @default(now()) /// 发生时间
+  handledBy   String?           /// 处理人
+  handledAt   DateTime?         /// 处理时间
+  resolution  String?           /// 处理结果
+
+  // 关系
+  order CareOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([severity])
+  @@map("risk_events")
+}
+
+/// 服务报告
+model ServiceReport {
+  id                 String   @id @default(cuid())
+  orderId            String   @unique /// 关联订单 ID
+  summary            String   /// 报告摘要
+  healthObservations String[] /// 健康观察
+  recommendations    String[] /// 建议
+  photos             String[] /// 照片 URL
+  submittedAt        DateTime @default(now()) /// 提交时间
+  submittedBy        String   /// 提交人
+
+  // 关系
+  order CareOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("service_reports")
+}
+
+// ─── 用药提醒 ───────────────────────────────
+
+/// 用药提醒
+model MedicationReminder {
+  id            String    @id @default(cuid())
+  elderlyId     String    /// 关联老人 ID
+  medicationName String   /// 药品名称
+  dosage        String    /// 剂量
+  frequency     String    /// 频率
+  reminderTime  String[]  /// 提醒时间列表
+  active        Boolean   @default(true) /// 是否启用
+  lastTakenAt   DateTime? /// 上次服药时间
+  missedCount   Int       @default(0) /// 漏服次数
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@index([elderlyId])
+  @@index([active])
+  @@map("medication_reminders")
+}
+
+// ─── 复诊提醒 ───────────────────────────────
+
+/// 复诊提醒
+model FollowUpReminder {
+  id            String   @id @default(cuid())
+  elderlyId     String   /// 关联老人 ID
+  hospital      String   /// 医院名称
+  department    String   /// 科室
+  doctor        String   /// 医生
+  scheduledDate DateTime /// 复诊日期
+  reason        String   /// 复诊原因
+  notified      Boolean  @default(false) /// 是否已通知
+  completed     Boolean  @default(false) /// 是否已完成
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // 关系
+  elderly ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+
+  @@index([elderlyId])
+  @@index([scheduledDate])
+  @@index([completed])
+  @@map("follow_up_reminders")
+}
+
+// ─── 政策数据库 ───────────────────────────────
+
+/// 养老政策
+model Policy {
+  id                 String         @id @default(cuid())
+  title              String         /// 政策标题
+  category           PolicyCategory /// 政策类别
+  level              PolicyLevel    /// 行政级别
+  province           String         /// 省份
+  city               String?        /// 城市
+  department         String         /// 发文部门
+  effectiveDate      DateTime       /// 生效日期
+  expiryDate         DateTime?      /// 失效日期
+  status             PolicyStatus   /// 政策状态
+  summary            String         /// 摘要
+  eligibility        String[]       /// 申请条件
+  benefits           String         /// 政策福利
+  requiredDocuments  String[]       /// 所需材料
+  applicationProcess String[]       /// 申请流程
+  applicationUrl     String?        /// 申请链接
+  contactPhone       String?        /// 联系电话
+  tags               String[]       /// 标签
+  updatedAt          DateTime       @updatedAt
+  createdAt          DateTime       @default(now())
+
+  @@index([category])
+  @@index([level])
+  @@index([province, city])
+  @@index([status])
+  @@index([tags])
+  @@map("policies")
+}
+
+// ─── 养老机构 ───────────────────────────────
+
+/// 养老机构
+model Institution {
+  id              String          @id @default(cuid())
+  name            String          /// 机构名称
+  type            InstitutionType /// 机构类型
+  province        String          /// 省份
+  city            String          /// 城市
+  district        String          /// 区县
+  address         String          /// 详细地址
+  beds            Int             /// 床位数
+  occupancyRate   Float?          /// 入住率
+  priceMin        Float           /// 最低价格
+  priceMax        Float           /// 最高价格
+  priceUnit       PriceUnit       /// 价格单位
+  services        String[]        /// 服务列表
+  rating          Float?          /// 评分
+  contactName     String          /// 联系人
+  contactPhone    String          /// 联系电话
+  website         String?         /// 网站
+  licenseNo       String          /// 许可证号
+  establishedYear Int             /// 成立年份
+  tags            String[]        /// 标签
+  updatedAt       DateTime        @updatedAt
+  createdAt       DateTime        @default(now())
+
+  // 关系
+  digitalMaturity DigitalMaturity?
+  salesLeads      SalesLead[]
+
+  @@index([type])
+  @@index([province, city, district])
+  @@index([rating])
+  @@map("institutions")
+}
+
+/// 数字化成熟度评估
+model DigitalMaturity {
+  id                  String               @id @default(cuid())
+  institutionId       String               @unique /// 关联机构 ID
+  score               Float                /// 总分（0-100）
+  level               DigitalMaturityLevel /// 成熟度等级
+  informationSystem   Float                /// 信息系统维度
+  dataManagement      Float                /// 数据管理维度
+  serviceDigitization Float                /// 服务数字化维度
+  staffTechAdoption   Float                /// 员工技术采纳维度
+  familyEngagement    Float                /// 家属参与维度
+  recommendations     String[]             /// 改善建议
+  assessedAt          DateTime             @default(now()) /// 评估时间
+
+  // 关系
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  @@map("digital_maturities")
+}
+
+// ─── 销售线索 ───────────────────────────────
+
+/// 销售线索
+model SalesLead {
+  id              String            @id @default(cuid())
+  institutionId   String            /// 关联机构 ID
+  institutionName String            /// 机构名称（冗余）
+  contactName     String            /// 联系人姓名
+  contactPhone    String            /// 联系人电话
+  contactRole     String            /// 联系人职位
+  source          SalesLeadSource   /// 线索来源
+  status          SalesLeadStatus   /// 线索状态
+  priority        SalesLeadPriority /// 优先级
+  estimatedValue  Float?            /// 预估价值
+  productInterest String[]          /// 产品兴趣
+  notes           String            /// 备注
+  lastContactAt   DateTime?         /// 上次联系时间
+  nextFollowUpAt  DateTime?         /// 下次跟进时间
+  assignedTo      String?           /// 分配给（用户 ID）
+  createdAt       DateTime          @default(now()) /// 创建时间
+  updatedAt       DateTime          @updatedAt
+
+  // 关系
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@index([institutionId])
+  @@index([status])
+  @@index([priority])
+  @@index([source])
+  @@index([assignedTo])
+  @@index([nextFollowUpAt])
+  @@map("sales_leads")
+}
+
+// ─── Agent 系统 ───────────────────────────────
+
+/// Agent 任务
+model AgentTask {
+  id                   String           @id @default(cuid())
+  type                 AgentTaskType    /// 任务类型
+  status               AgentTaskStatus  /// 任务状态
+  input                Json             /// 输入参数
+  output               Json?            /// 输出结果
+  confidence           Float            @default(0) /// 置信度
+  sources              String[]         /// 数据来源
+  requiresHumanReview  Boolean          @default(false) /// 是否需要人工审核
+  reviewedBy           String?          /// 审核人
+  reviewedAt           DateTime?        /// 审核时间
+  errorMessage         String?          /// 错误信息
+  createdAt            DateTime         @default(now()) /// 创建时间
+  completedAt          DateTime?        /// 完成时间
+
+  @@index([type])
+  @@index([status])
+  @@index([requiresHumanReview])
+  @@index([createdAt])
+  @@map("agent_tasks")
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>银龄AI</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      width: 360px;
+      min-height: 280px;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f8fafc;
+    }
+    .popup-header {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .popup-header h1 {
+      margin: 0 0 4px 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .popup-header p {
+      margin: 0;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+    .popup-body {
+      padding: 16px;
+    }
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus {
+      border-color: #6366f1;
+    }
+    .search-box button {
+      padding: 10px 16px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-box button:hover {
+      background: #4f46e5;
+    }
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: #1e293b;
+    }
+    .action-btn:hover {
+      border-color: #6366f1;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+    }
+    .action-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .action-icon.purple { background: #ede9fe; }
+    .action-icon.blue { background: #dbeafe; }
+    .action-icon.green { background: #dcfce7; }
+    .action-text {
+      flex: 1;
+    }
+    .action-text strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .action-text span {
+      font-size: 12px;
+      color: #64748b;
+    }
+    .popup-footer {
+      padding: 12px 16px;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+    }
+    .popup-footer a {
+      color: #6366f1;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .popup-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- 头部 -->
+  <div class="popup-header">
+    <h1>银龄AI</h1>
+    <p>中国老龄化社会 AI 服务引擎</p>
+  </div>
+
+  <!-- 搜索区域 -->
+  <div class="popup-body">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索养老政策..." />
+      <button id="searchBtn">搜索</button>
+    </div>
+
+    <!-- 快捷操作 -->
+    <div class="quick-actions">
+      <a class="action-btn" id="openSidepanel" href="#">
+        <div class="action-icon purple">📋</div>
+        <div class="action-text">
+          <strong>打开侧边栏</strong>
+          <span>政策查询、补贴匹配、健康摘要</span>
+        </div>
+      </a>
+      <a class="action-btn" id="openDashboard" href="#">
+        <div class="action-icon blue">📊</div>
+        <div class="action-text">
+          <strong>管理后台</strong>
+          <span>数据仪表盘、订单管理、线索追踪</span>
+        </div>
+      </a>
+      <a class="action-btn" id="quickMatch" href="#">
+        <div class="action-icon green">🎯</div>
+        <div class="action-text">
+          <strong>快速补贴匹配</strong>
+          <span>输入年龄和城市,一键匹配补贴</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div class="popup-footer">
+    <a href="http://localhost:3000" target="_blank" id="dashboardLink">访问衍策银龄 AI 平台 →</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

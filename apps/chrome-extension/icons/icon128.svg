@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="g128" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="shadow128" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#6366f1" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- 背景 -->
+  <rect width="128" height="128" rx="28" fill="url(#g128)" filter="url(#shadow128)"/>
+  <!-- 心形(大) -->
+  <path d="M64 30C54 18 34 18 26 32C18 46 32 66 64 92C96 66 110 46 102 32C94 18 74 18 64 30Z" fill="white" opacity="0.92"/>
+  <!-- AI 文字 -->
+  <text x="64" y="72" font-size="28" fill="#6366f1" text-anchor="middle" font-weight="bold" font-family="sans-serif">AI</text>
+  <!-- 电路装饰 - 左上 -->
+  <line x1="12" y1="12" x2="32" y2="12" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <line x1="12" y1="12" x2="12" y2="32" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <circle cx="12" cy="12" r="4" fill="white" opacity="0.4"/>
+  <!-- 电路装饰 - 右上 -->
+  <line x1="116" y1="12" x2="96" y2="12" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <line x1="116" y1="12" x2="116" y2="32" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <circle cx="116" cy="12" r="4" fill="white" opacity="0.4"/>
+  <!-- 电路装饰 - 左下 -->
+  <line x1="12" y1="116" x2="32" y2="116" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <line x1="12" y1="116" x2="12" y2="96" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <circle cx="12" cy="116" r="4" fill="white" opacity="0.4"/>
+  <!-- 电路装饰 - 右下 -->
+  <line x1="116" y1="116" x2="96" y2="116" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <line x1="116" y1="116" x2="116" y2="96" stroke="white" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+  <circle cx="116" cy="116" r="4" fill="white" opacity="0.4"/>
+  <!-- 小点装饰 -->
+  <circle cx="20" cy="24" r="2" fill="white" opacity="0.25"/>
+  <circle cx="24" cy="20" r="1.5" fill="white" opacity="0.25"/>
+  <circle cx="108" cy="24" r="2" fill="white" opacity="0.25"/>
+  <circle cx="104" cy="20" r="1.5" fill="white" opacity="0.25"/>
+</svg>

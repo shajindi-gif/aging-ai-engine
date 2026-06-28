@@ -1,0 +1,19 @@
+import type { CareRecord } from "@/lib/types";
+
+export const mockCareRecords: CareRecord[] = [
+  { id: "cr-001", orderId: "ord-001", elderlyId: "eld-001", elderlyName: "王秀兰", providerId: "cg-001", providerName: "刘芳", type: "escort", content: "陪同糖尿病复查，空腹血糖7.8mmol/L，糖化血红蛋白6.8%，医生调整用药方案。老人精神状态良好。", riskLevel: "low", familyVisible: true, createdAt: "2024-10-15T12:30:00" },
+  { id: "cr-002", orderId: "ord-002", elderlyId: "eld-002", elderlyName: "李国华", providerId: "cg-002", providerName: "张敏", type: "nursing", content: "居家护理服务，协助呼吸训练、翻身、基础清洁。血氧一度下降至88%，给予吸氧后恢复至94%。", riskLevel: "high", familyVisible: true, createdAt: "2024-10-16T16:00:00" },
+  { id: "cr-003", orderId: "ord-006", elderlyId: "eld-001", elderlyName: "王秀兰", providerId: "cg-005", providerName: "李阿姨", type: "bathing", content: "助浴顺利完成，老人状态良好，皮肤无异常。关节活动度正常，情绪愉快。", riskLevel: "none", familyVisible: true, createdAt: "2024-10-14T11:30:00" },
+  { id: "cr-004", orderId: "ord-007", elderlyId: "eld-006", elderlyName: "孙志强", providerId: "cg-006", providerName: "小周", type: "companion", content: "陪同参加社区书法活动，老人积极参与，书写作品两幅，社交互动良好。", riskLevel: "none", familyVisible: true, createdAt: "2024-10-12T17:00:00" },
+  { id: "cr-005", elderlyId: "eld-003", elderlyName: "张美英", providerId: "cg-003", providerName: "王丽", type: "companion", content: "陪伴散步20分钟，进行简单认知训练游戏。老人情绪稳定，能认出护理人员。", riskLevel: "low", familyVisible: true, createdAt: "2024-10-13T15:00:00" },
+  { id: "cr-006", elderlyId: "eld-005", elderlyName: "赵凤珍", providerId: "cg-004", providerName: "陈康复师", type: "rehabilitation", content: "帕金森康复训练：步态训练30分钟，平衡练习20分钟。震颤较上次有所减轻，行走稳定性改善。", riskLevel: "low", familyVisible: true, createdAt: "2024-10-11T11:00:00" },
+  { id: "cr-007", elderlyId: "eld-004", elderlyName: "陈大明", providerId: "cg-007", providerName: "赵护士", type: "health_check", content: "社区健康监测：血压135/85mmHg，空腹血糖8.2mmol/L，体重72kg。血糖控制需持续关注。", riskLevel: "medium", familyVisible: true, createdAt: "2024-10-10T09:30:00" },
+  { id: "cr-008", elderlyId: "eld-002", elderlyName: "李国华", providerId: "cg-002", providerName: "张敏", type: "nursing", content: "居家护理：协助用药管理、基础清洁、呼吸功能训练。血氧93%，精神状态一般。", riskLevel: "medium", familyVisible: true, createdAt: "2024-10-09T15:00:00" },
+  { id: "cr-009", elderlyId: "eld-001", elderlyName: "王秀兰", providerId: "cg-001", providerName: "刘芳", type: "escort", content: "陪同心内科复查，血压128/82mmHg正常范围，心电图正常。医生建议继续当前用药方案。", riskLevel: "none", familyVisible: true, createdAt: "2024-09-20T12:00:00" },
+  { id: "cr-010", elderlyId: "eld-005", elderlyName: "赵凤珍", providerId: "cg-004", providerName: "陈康复师", type: "rehabilitation", content: "帕金森康复训练：手指精细动作训练、步态纠正。老人配合度好，但疲劳感明显。", riskLevel: "low", familyVisible: true, createdAt: "2024-10-08T10:30:00" },
+  { id: "cr-011", elderlyId: "eld-003", elderlyName: "张美英", providerId: "cg-003", providerName: "王丽", type: "nursing", content: "认知症照护：协助进食、定向力训练。今日食欲一般，需耐心引导。偶有焦躁行为。", riskLevel: "medium", familyVisible: true, createdAt: "2024-10-07T12:00:00" },
+  { id: "cr-012", elderlyId: "eld-006", elderlyName: "孙志强", providerId: "cg-006", providerName: "小周", type: "companion", content: "陪同社区体检，各项指标正常。血压130/80mmHg。老人心情愉快。", riskLevel: "none", familyVisible: false, createdAt: "2024-10-05T10:00:00" },
+  { id: "cr-013", elderlyId: "eld-004", elderlyName: "陈大明", providerId: "cg-007", providerName: "赵护士", type: "health_check", content: "糖尿病随访：空腹血糖7.5mmol/L，餐后2h血糖10.1mmol/L。建议调整饮食结构。", riskLevel: "low", familyVisible: true, createdAt: "2024-10-03T09:00:00" },
+  { id: "cr-014", elderlyId: "eld-001", elderlyName: "王秀兰", providerId: "cg-005", providerName: "李阿姨", type: "cleaning", content: "居家清洁服务：厨房、卫生间深度清洁，更换床单被罩。老人满意。", riskLevel: "none", familyVisible: true, createdAt: "2024-10-02T14:00:00" },
+  { id: "cr-015", elderlyId: "eld-002", elderlyName: "李国华", providerId: "cg-002", providerName: "张敏", type: "nursing", content: "紧急出诊陪同：因呼吸困难呼叫120，陪同前往北京朝阳医院急诊。诊断为慢阻肺急性加重。", riskLevel: "high", familyVisible: true, createdAt: "2024-10-10T22:00:00" },
+];
