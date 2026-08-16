@@ -10,7 +10,8 @@
     "lint:fix": "eslint --fix",
     "build:sdk": "cd sdk && npx tsc",
     "build:mcp": "cd mcp-server && npx tsc",
-    "dev:all": "next dev"
+    "dev:all": "next dev",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
