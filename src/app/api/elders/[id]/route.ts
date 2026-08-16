@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
+import prisma from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { apiSuccess, apiError } from "@/lib/api-response";
-import { mockElders, mockCareOrders } from "@/lib/mock";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -12,28 +13,63 @@ export async function OPTIONS() {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
 
+/**
+ * GET /api/elders/[id]
+ * Retrieve a single elderly profile with all related data.
+ *
+ * Includes:
+ *  - healthSummary
+ *  - medications (active only — endDate is null)
+ *  - visitRecords (most recent 10)
+ *  - riskFlags (unresolved — resolvedAt is null)
+ *  - familyMembers
+ *  - emergencyContact
+ *  - careOrders (most recent 5)
+ */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await params;
-    const elders = (mockElders ?? []) as any[];
-    const elder = elders.find((e) => e.id === id);
-
-    if (!elder) {
-      return apiError(`老人 ${id} 未找到`, 404);
+    const session = await auth();
+    if (!session) {
+      return apiError("Unauthorized", 401);
     }
 
-    // Attach recent care records
-    const orders = (mockCareOrders ?? []) as any[];
-    const recentRecords = orders.filter((o) => o.elderlyId === id).slice(0, 5);
+    const { id } = await params;
 
-    return apiSuccess({
-      ...elder,
-      recentCareRecords: recentRecords,
+    const elder = await prisma.elderlyProfile.findUnique({
+      where: { id },
+      include: {
+        healthSummary: true,
+        medications: {
+          where: { endDate: null },
+          orderBy: { startDate: "desc" },
+        },
+        visitRecords: {
+          orderBy: { date: "desc" },
+          take: 10,
+        },
+        riskFlags: {
+          where: { resolvedAt: null },
+          orderBy: { detectedAt: "desc" },
+        },
+        familyMembers: true,
+        emergencyContact: true,
+        careOrders: {
+          orderBy: { createdAt: "desc" },
+          take: 5,
+        },
+      },
     });
+
+    if (!elder) {
+      return apiError(`Elder ${id} not found`, 404);
+    }
+
+    return apiSuccess(elder, { source: "database" });
   } catch (error) {
-    return apiError("获取老人详情失败", 500);
+    console.error("GET /api/elders/[id] error:", error);
+    return apiError("Failed to fetch elder details", 500);
   }
 }

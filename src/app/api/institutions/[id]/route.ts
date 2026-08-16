@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
-import { apiSuccess, apiError } from "@/lib/api-response";
-import { mockInstitutions } from "@/lib/mock";
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -18,15 +18,40 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const institutions = (mockInstitutions ?? []) as any[];
-    const institution = institutions.find((i) => i.id === id);
+
+    const institution = await prisma.institution.findUnique({
+      where: { id },
+      include: { digitalMaturity: true },
+    });
 
     if (!institution) {
-      return apiError(`机构 ${id} 未找到`, 404);
+      return NextResponse.json(
+        { success: false, error: `Institution ${id} not found` },
+        { status: 404, headers: CORS_HEADERS }
+      );
     }
 
-    return apiSuccess(institution);
+    // Authenticated users get contact details; public users don't
+    const session = await auth();
+
+    if (!session?.user) {
+      const { contactName, contactPhone, licenseNo, ...publicInstitution } =
+        institution;
+      return NextResponse.json(
+        { success: true, data: publicInstitution },
+        { headers: CORS_HEADERS }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, data: institution },
+      { headers: CORS_HEADERS }
+    );
   } catch (error) {
-    return apiError("获取机构详情失败", 500);
+    console.error("GET /api/institutions/[id] error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch institution details" },
+      { status: 500, headers: CORS_HEADERS }
+    );
   }
 }

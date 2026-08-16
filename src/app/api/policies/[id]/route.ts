@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
-import { apiSuccess, apiError } from "@/lib/api-response";
-import { mockPolicies } from "@/lib/mock";
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -18,15 +18,38 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const policies = (mockPolicies ?? []) as any[];
-    const policy = policies.find((p) => p.id === id);
+
+    const policy = await prisma.policy.findUnique({
+      where: { id },
+    });
 
     if (!policy) {
-      return apiError(`政策 ${id} 未找到`, 404);
+      return NextResponse.json(
+        { success: false, error: `Policy ${id} not found` },
+        { status: 404, headers: CORS_HEADERS }
+      );
     }
 
-    return apiSuccess(policy);
+    // Authenticated users get full details; public users skip fullText
+    const session = await auth();
+
+    if (!session?.user) {
+      const { fullText, ...publicPolicy } = policy;
+      return NextResponse.json(
+        { success: true, data: publicPolicy },
+        { headers: CORS_HEADERS }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, data: policy },
+      { headers: CORS_HEADERS }
+    );
   } catch (error) {
-    return apiError("获取政策详情失败", 500);
+    console.error("GET /api/policies/[id] error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch policy details" },
+      { status: 500, headers: CORS_HEADERS }
+    );
   }
 }
