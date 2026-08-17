@@ -1,71 +1,87 @@
 // @ts-nocheck
 // ═══════════════════════════════════════════════
-// 衍策银龄 AI — 销售线索 API
-// GET: 获取线索列表,支持 status 过滤
-// POST: 创建新线索(模拟)
+// 衍策银龄 AI — 销售线索 API (Prisma)
 // ═══════════════════════════════════════════════
 
 import { NextRequest, NextResponse } from "next/server";
-import { mockSalesLeads } from "@/lib/mock";
-import type { SalesLead } from "@/lib/types";
+import prisma from "@/lib/db";
 
-/** CORS 通用响应头 */
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-/** 处理 OPTIONS 预检请求 */
 export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
 
-/** GET /api/sales-leads — 获取销售线索列表 */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
+    const source = searchParams.get("source");
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") || "50", 10)));
 
-    let filtered: SalesLead[] = [...mockSalesLeads];
+    const where: Record<string, unknown> = {};
+    if (status) where.status = status.toUpperCase();
+    if (source) where.source = source.toUpperCase();
 
-    if (status) {
-      filtered = filtered.filter((l) => l.followUpStatus === status);
-    }
+    const [leads, total] = await Promise.all([
+      prisma.salesLead.findMany({
+        where,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { createdAt: "desc" },
+        include: { institution: true },
+      }),
+      prisma.salesLead.count({ where }),
+    ]);
 
-    return NextResponse.json(
-      { data: filtered, total: filtered.length },
-      { headers: corsHeaders }
-    );
+    return NextResponse.json({
+      success: true,
+      data: leads,
+      meta: { total, page, pageSize, totalPages: Math.ceil(total / pageSize), source: "database" },
+    }, { headers: corsHeaders });
   } catch (error) {
     console.error("[sales-leads] GET error:", error);
     return NextResponse.json(
-      { error: "获取销售线索失败,请稍后重试" },
+      { success: false, error: "获取销售线索失败" },
       { status: 500, headers: corsHeaders }
     );
   }
 }
 
-/** POST /api/sales-leads — 创建新线索(模拟) */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
-    const newLead = {
-      ...body,
-      id: `lead-${Date.now()}`,
-      status: "new",
-      createdAt: new Date().toISOString(),
-    };
+    const lead = await prisma.salesLead.create({
+      data: {
+        institutionId: body.institutionId,
+        institutionName: body.institutionName || "",
+        contactName: body.contactName,
+        contactPhone: body.contactPhone,
+        contactRole: body.contactRole,
+        source: body.source || "REFERRAL",
+        status: body.status || "NEW",
+        priority: body.priority || "MEDIUM",
+        estimatedValue: body.estimatedValue,
+        productInterest: body.productInterest || [],
+        score: body.score,
+        notes: body.notes,
+        assignedTo: body.assignedTo,
+      },
+    });
 
     return NextResponse.json(
-      { data: newLead, message: "线索创建成功" },
+      { success: true, data: lead, message: "线索创建成功" },
       { status: 201, headers: corsHeaders }
     );
   } catch (error) {
     console.error("[sales-leads] POST error:", error);
     return NextResponse.json(
-      { error: "创建线索失败,请检查请求参数" },
+      { success: false, error: "创建线索失败" },
       { status: 400, headers: corsHeaders }
     );
   }

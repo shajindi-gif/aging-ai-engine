@@ -1,54 +1,73 @@
 // @ts-nocheck
 // ═══════════════════════════════════════════════
-// 衍策银龄 AI — 健康档案 API
-// GET: 获取老人列表,支持 ?id=X 获取单个档案
+// 衍策银龄 AI — 健康档案 API (Prisma)
+// GET: 获取老人健康档案,支持 ?id=X 获取单个
 // ═══════════════════════════════════════════════
 
 import { NextRequest, NextResponse } from "next/server";
-import { mockElderly } from "@/lib/mock";
+import prisma from "@/lib/db";
 
-/** CORS 通用响应头 */
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-/** 处理 OPTIONS 预检请求 */
 export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
 
-/** GET /api/health-records — 获取老人档案 */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    // 按 ID 查询单个档案
     if (id) {
-      const elderly = mockElderly.find((e) => e.id === id);
+      const elderly = await prisma.elderlyProfile.findUnique({
+        where: { id },
+        include: {
+          healthSummary: true,
+          medications: { orderBy: { startDate: "desc" }, take: 10 },
+          visitRecords: { orderBy: { date: "desc" }, take: 10 },
+          riskFlags: { where: { resolvedAt: null }, take: 10 },
+          familyMembers: true,
+          emergencyContact: true,
+          chronicMetrics: { orderBy: { metricDate: "desc" }, take: 20 },
+          medicationReminders: { where: { status: "ACTIVE" }, take: 10 },
+        },
+      });
+
       if (!elderly) {
         return NextResponse.json(
-          { error: `未找到 ID 为 ${id} 的老人档案` },
+          { success: false, error: "未找到该老人档案" },
           { status: 404, headers: corsHeaders }
         );
       }
+
       return NextResponse.json(
-        { data: elderly },
+        { success: true, data: elderly },
         { headers: corsHeaders }
       );
     }
 
-    // 返回所有档案列表
+    // List all elders with health summary
+    const elders = await prisma.elderlyProfile.findMany({
+      take: 100,
+      orderBy: { createdAt: "desc" },
+      include: {
+        healthSummary: true,
+        emergencyContact: true,
+      },
+    });
+
     return NextResponse.json(
-      { data: mockElderly, total: mockElderly.length },
+      { success: true, data: elders, total: elders.length },
       { headers: corsHeaders }
     );
   } catch (error) {
     console.error("[health-records] GET error:", error);
     return NextResponse.json(
-      { error: "获取健康档案失败,请稍后重试" },
+      { success: false, error: "获取健康档案失败" },
       { status: 500, headers: corsHeaders }
     );
   }

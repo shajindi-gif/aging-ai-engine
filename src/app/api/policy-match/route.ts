@@ -1,7 +1,12 @@
 // @ts-nocheck
+// ═══════════════════════════════════════════════
+// 衍策银龄 AI — 政策匹配 API (Prisma)
+// POST: 根据用户条件匹配政策
+// ═══════════════════════════════════════════════
+
 import { NextRequest } from "next/server";
 import { apiSuccess, apiError } from "@/lib/api-response";
-import { mockPolicies } from "@/lib/mock";
+import prisma from "@/lib/db";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -18,18 +23,51 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { region, age, careLevel, disabilityLevel, incomeLevel, applicantType } = body;
 
-    const policies = (mockPolicies ?? []) as any[];
+    // Fetch active policies from DB
+    const where: Record<string, unknown> = {
+      status: "ACTIVE",
+    };
+    if (region) {
+      where.OR = [
+        { province: region },
+        { city: region },
+        { province: "全国" },
+      ];
+    }
 
-    // Simple scoring logic
-    const scored = policies.map((p) => {
+    const policies = await prisma.policy.findMany({
+      where,
+      orderBy: { publishDate: "desc" },
+      take: 100,
+    });
+
+    // Score-based matching
+    const scored = policies.map((p: any) => {
       let score = 0.5;
-      if (region && (p.province === region || p.city === region || p.province === "全国")) score += 0.2;
-      if (age && p.eligibility.some((e: string) => e.includes("周岁"))) {
-        const match = p.eligibility.find((e: string) => e.includes("周岁"));
-        const ageMatch = match?.match(/(\d+)/);
+
+      // Region match
+      if (region) {
+        if (p.province === region || p.city === region) score += 0.2;
+        if (p.province === "全国") score += 0.15;
+      }
+
+      // Age match
+      if (age && p.eligibilityCriteria) {
+        const criteria = Array.isArray(p.eligibilityCriteria) ? p.eligibilityCriteria : [];
+        const ageMatch = criteria.find((e: string) => e.includes("周岁"))?.match(/(\d+)/);
         if (ageMatch && age >= parseInt(ageMatch[1])) score += 0.15;
       }
-      if (careLevel && (careLevel === "dependent" || careLevel === "critical")) score += 0.1;
+
+      // Care level match
+      if (careLevel && (careLevel === "DEPENDENT" || careLevel === "CRITICAL" || careLevel === "dependent" || careLevel === "critical")) {
+        score += 0.1;
+      }
+
+      // Disability level match
+      if (disabilityLevel && (disabilityLevel === "重度" || disabilityLevel === "severe")) {
+        score += 0.1;
+      }
+
       return { ...p, matchScore: Math.min(score, 0.98) };
     });
 
@@ -41,8 +79,9 @@ export async function POST(request: NextRequest) {
       matches: matched,
       total: matched.length,
       query: { region, age, careLevel, disabilityLevel, incomeLevel, applicantType },
-    });
+    }, { source: "database" });
   } catch (error) {
+    console.error("[policy-match] error:", error);
     return apiError("政策匹配失败", 500);
   }
 }
