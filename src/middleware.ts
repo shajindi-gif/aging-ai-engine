@@ -16,14 +16,13 @@ const isPublicPath = (pathname: string) => {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  // Allow all API routes through — individual handlers manage their own auth
-  if (pathname.startsWith('/api/')) {
-    return NextResponse.next()
-  }
+  // Debug header to confirm middleware is running
+  const response = NextResponse.next()
+  response.headers.set('x-mw-debug', `path=${pathname}`)
 
   // Allow public paths
   if (isPublicPath(pathname)) {
-    return NextResponse.next()
+    return response
   }
 
   // Allow static files and Next.js internals
@@ -32,7 +31,7 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith('/favicon') ||
     pathname.includes('.')
   ) {
-    return NextResponse.next()
+    return response
   }
 
   // Check auth for protected page routes (dashboard, etc.)
@@ -44,9 +43,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  return NextResponse.next()
+  return response
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  // Exclude /api, _next/static, _next/image, favicon.ico from middleware
+  matcher: ['/((?!api/|_next/static|_next/image|favicon.ico).*)'],
 }
