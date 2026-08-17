@@ -5,7 +5,8 @@ const publicPaths = [
   '/', '/login', '/register', '/pricing', '/products', '/contact',
   '/compliance', '/trust', '/demo', '/docs', '/developers',
   '/tools', '/templates', '/solutions', '/resources', '/city',
-  '/policies', '/api/auth', '/api/health',
+  '/policies', '/institutions', '/care-crm', '/care-orders',
+  '/care-records', '/policy-match', '/elders', '/agents',
 ]
 
 const isPublicPath = (pathname: string) => {
@@ -14,6 +15,11 @@ const isPublicPath = (pathname: string) => {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
+
+  // Allow all API routes through — individual handlers manage their own auth
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
 
   // Allow public paths
   if (isPublicPath(pathname)) {
@@ -29,7 +35,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  // Check auth for protected routes
+  // Check auth for protected page routes (dashboard, etc.)
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
 
   if (!token) {
