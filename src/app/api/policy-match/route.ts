@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     const policies = await prisma.policy.findMany({
       where,
-      orderBy: { publishDate: "desc" },
+      orderBy: { createdAt: "desc" },
       take: 100,
     });
 
@@ -51,11 +51,14 @@ export async function POST(request: NextRequest) {
         if (p.province === "全国") score += 0.15;
       }
 
-      // Age match
-      if (age && p.eligibilityCriteria) {
-        const criteria = Array.isArray(p.eligibilityCriteria) ? p.eligibilityCriteria : [];
-        const ageMatch = criteria.find((e: string) => e.includes("周岁"))?.match(/(\d+)/);
-        if (ageMatch && age >= parseInt(ageMatch[1])) score += 0.15;
+      // Age match — eligibility is String[] like ["60周岁以上", "上海户籍"]
+      if (age && p.eligibility) {
+        const criteria = Array.isArray(p.eligibility) ? p.eligibility : [];
+        const ageItem = criteria.find((e: string) => e.includes("周岁") || e.includes("岁"));
+        if (ageItem) {
+          const ageMatch = ageItem.match(/(\d+)/);
+          if (ageMatch && age >= parseInt(ageMatch[1])) score += 0.15;
+        }
       }
 
       // Care level match
