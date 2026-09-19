@@ -7,7 +7,8 @@ import {
   Lock,
   Server,
   Mail,
-  Phone,
+  MessageSquare,
+  MapPin,
   AlertTriangle,
   FileText,
   CheckCircle2,
@@ -24,10 +25,10 @@ const sections = [
     title: "1. 数据合规",
     content: [
       "严格遵守《数据安全法》和《个人信息保护法》，全流程安全管理。",
-      "所有PII采用AES-256加密存储，传输链路TLS 1.3。",
+      "个人信息在传输过程中通过 HTTPS 加密保护；静态数据加密等措施在持续加强。",
       "数据最小化原则，仅收集服务必需信息。",
-      "用户可随时查看、修改或删除个人数据。",
-      "定期安全评估和渗透测试。",
+      "敏感数据接口需登录访问，并按角色进行权限隔离。",
+      "用户可通过账户或联系客服申请查阅、更正、删除个人数据，请求在身份核实后处理。",
     ],
   },
   {
@@ -35,7 +36,7 @@ const sections = [
     title: "2. 医疗合规",
     content: [
       "本平台不提供医疗诊断、治疗建议或医疗决策。",
-      "AI健康评估报告仅供护理人员参考，不替代执业医生判断。",
+      "AI 健康评估报告仅供护理人员参考，不替代执业医生判断。",
       "平台不存储、不传输电子处方信息。",
       "所有健康信息页面标注医疗免责声明。",
       "医疗相关变更将提前通知并重新评估合规性。",
@@ -48,8 +49,8 @@ const sections = [
     content: [
       "政策信息来源于各级政府官方网站公开信息，经人工核实。",
       "匹配结果仅供参考，具体资格以当地主管部门审核为准。",
-      "政策信息至少每季度更新一次，重大变更48小时内推送。",
       "平台不代办政策申请，不提供结果承诺。",
+      "政策数据随来源更新持续维护，重大变更尽力及时推送。",
     ],
   },
   {
@@ -57,31 +58,31 @@ const sections = [
     title: "4. 隐私保护",
     content: [
       "不向第三方出售用户数据，不用于广告投放。",
-      "AI模型训练不使用用户个人数据。",
-      "数据访问实行严格权限控制和审计日志。",
-      "企业版支持私有化部署。",
-      "安全事件72小时内通知用户并报告主管部门。",
+      "不使用您的个人数据训练第三方大模型；AI 功能仅在提供服务所必需时经服务端调用。",
+      "数据访问实行权限控制，关键操作留痕可追溯。",
+      "支持按需评估私有化部署方案。",
+      "发生安全事件时，依法及时告知用户并向主管部门报告。",
     ],
   },
   {
     icon: Server,
     title: "5. 安全标准",
     content: [
-      "国家信息安全等级保护三级认证（等保三级）。",
-      "多层安全架构：WAF、DDoS防御、入侵检测。",
-      "每次发布前静态代码分析和安全审查。",
-      "RBAC权限管理，支持双因素认证（2FA）。",
-      "每日增量备份，RTO < 4小时，RPO < 1小时。",
+      "传输层启用 HTTPS；部署于成熟云平台，具备基础网络防护能力。",
+      "基于角色（RBAC）的权限管理。",
+      "关键功能发布前进行代码与安全审查。",
+      "静态数据加密、双因素认证、入侵检测等属持续建设项，尚未全部落地。",
+      "如客户合规需要，我们可配合开展安全评估，并就等级保护（等保）备案与认证另行推进。",
     ],
   },
   {
     icon: Eye,
     title: "6. AI 透明度",
     content: [
-      "AI生成内容明确标注，与人工内容区分显示。",
-      "提供AI决策的可解释性说明和置信度指标。",
-      "高风险AI输出需经人工审核后发布。",
-      "用户可选择关闭AI辅助功能。",
+      "对 AI 辅助生成的内容提供说明与风险提示。",
+      "高风险 AI 输出标注需人工复核后使用。",
+      "本版本部分 AI 能力为算法演示，实际效果以页面标注为准。",
+      "不夸大模型准确率或保密能力。",
     ],
   },
   {
@@ -89,18 +90,17 @@ const sections = [
     title: "7. 数据治理",
     content: [
       "数据分类分级管理，敏感数据特殊保护。",
-      "数据保留策略：服务停止后90天自动清除。",
-      "数据迁移支持标准格式导出。",
-      "数据审计日志完整可追溯。",
+      "数据保留与删除依《隐私政策》执行，账户注销或服务终止后按约定处理。",
+      "数据导出支持标准格式（能力随版本迭代完善）。",
+      "访问与操作留痕，便于审计与追溯。",
     ],
   },
   {
     icon: Users,
     title: "8. 无障碍与适老化",
     content: [
-      "界面设计遵循WCAG 2.1 AA标准。",
-      "支持大字体模式和高对比度显示。",
-      "语音交互和屏幕阅读器兼容。",
+      "界面设计参考无障碍与适老化实践。",
+      "逐步优化大字体、高对比度等可访问性支持。",
       "家属和护理人员可代为操作。",
     ],
   },
@@ -108,9 +108,9 @@ const sections = [
     icon: Scale,
     title: "9. 商业合规",
     content: [
-      "价格透明，无隐藏费用。",
-      "合同条款清晰，SLA保障。",
-      "退款政策：年付方案30天内无理由退款。",
+      "价格公开，无隐藏费用。",
+      "合同条款清晰，服务等级以正式合同约定为准。",
+      "退款与开票按合同约定执行，可开具合规税务发票。",
       "遵守《反不正当竞争法》和《消费者权益保护法》。",
     ],
   },
@@ -128,7 +128,7 @@ export default function CompliancePage() {
           </div>
           <h1 className="text-3xl font-bold text-text-primary sm:text-4xl lg:text-5xl">合规声明</h1>
           <p className="mx-auto mt-4 max-w-xl text-text-secondary">
-            我们重视数据安全、医疗合规和用户隐私，以下是我们的9项合规承诺
+            我们在数据安全、医疗边界和用户隐私方面的实践与承诺（部分为持续建设项，以实际落地为准）
           </p>
         </div>
       </section>
@@ -188,25 +188,25 @@ export default function CompliancePage() {
               </div>
               <div>
                 <p className="text-xs text-text-muted">邮箱</p>
-                <p className="text-sm font-medium text-text-primary">compliance@yance.ai</p>
+                <p className="text-sm font-medium text-text-primary">contact@yanglaoai999.com</p>
               </div>
             </div>
-            <div className="yc-card flex items-center gap-3">
+            <a href="/contact" className="yc-card flex items-center gap-3 transition-colors hover:border-brand-300">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
-                <Phone className="h-5 w-5 text-brand-600" />
+                <MessageSquare className="h-5 w-5 text-brand-600" />
               </div>
               <div>
-                <p className="text-xs text-text-muted">电话</p>
-                <p className="text-sm font-medium text-text-primary">021-8888-9999</p>
+                <p className="text-xs text-text-muted">在线咨询</p>
+                <p className="text-sm font-medium text-text-primary">填写联系表单</p>
               </div>
-            </div>
+            </a>
             <div className="yc-card flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
-                <FileText className="h-5 w-5 text-brand-600" />
+                <MapPin className="h-5 w-5 text-brand-600" />
               </div>
               <div>
-                <p className="text-xs text-text-muted">地址</p>
-                <p className="text-sm font-medium text-text-primary">上海市浦东新区</p>
+                <p className="text-xs text-text-muted">主体</p>
+                <p className="text-sm font-medium text-text-primary">上海衍策引擎 · 浦东新区</p>
               </div>
             </div>
           </div>

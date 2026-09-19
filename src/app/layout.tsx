@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://yanglaoai999.com"
+  ),
   title: "衍策银龄 AI — AI驱动的养老服务基础设施",
   description:
     "为老人家庭、陪诊团队、护理机构和社区服务站提供智能工作助手。涵盖养老政策数据库、补贴匹配、陪诊CRM、健康档案管理、养老机构销售线索等核心功能。",
@@ -31,6 +34,25 @@ export const metadata: Metadata = {
     "银发经济",
     "衍策银龄",
   ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "zh_CN",
+    siteName: "衍策银龄 AI",
+    title: "衍策银龄 AI — AI驱动的养老服务基础设施",
+    description:
+      "面向银发经济的 AI 原生 SaaS：养老政策数据库、补贴匹配、陪诊护理 CRM、机构销售线索与 Agent 工作台。",
+  },
+  twitter: {
+    card: "summary",
+    title: "衍策银龄 AI — AI驱动的养老服务基础设施",
+    description: "面向银发经济的 AI 原生 SaaS 平台。",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export default function RootLayout({

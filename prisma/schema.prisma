@@ -1027,3 +1027,29 @@ model PricingPlan {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
+
+// ═══════════════════════════════════════════
+// CONTACT / DEMO / FEEDBACK SUBMISSIONS
+// (public form intake — stored for human follow-up)
+// ═══════════════════════════════════════════
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  company   String?
+  email     String
+  phone     String?
+  type      String   @default("DEMO") // DEMO | PARTNER | FEEDBACK | OTHER
+  products  String[] @default([])
+  message   String
+  consent   Boolean  @default(false) // explicit agreement to privacy policy + being contacted
+  consentAt DateTime @default(now())
+  source    String?  // page path the submission came from
+  status    String   @default("NEW") // NEW | IN_PROGRESS | DONE | SPAM
+  handledBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}

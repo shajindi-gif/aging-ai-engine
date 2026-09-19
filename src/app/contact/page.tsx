@@ -18,9 +18,13 @@ const productOptions = [
 
 export default function ContactPage() {
   const [form, setForm] = useState({
-    name: "", company: "", email: "", phone: "", message: "", products: [] as string[],
+    name: "", company: "", email: "", phone: "", message: "",
+    products: [] as string[], website: "", // website = honeypot, hidden from users
   });
+  const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleProduct = (p: string) => {
     setForm((prev) => ({
@@ -29,9 +33,42 @@ export default function ContactPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError("");
+    if (!consent) {
+      setError("请先阅读并勾选同意《隐私政策》与《服务条款》");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          company: form.company,
+          email: form.email,
+          phone: form.phone,
+          message: form.message,
+          products: form.products,
+          consent,
+          source: "/contact",
+          type: "DEMO",
+          website: form.website,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.success) {
+        setSubmitted(true);
+      } else {
+        setError(data?.error || "提交失败，请稍后重试或通过电话/邮箱联系我们");
+      }
+    } catch {
+      setError("网络异常，提交未成功，请稍后重试");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,7 +97,7 @@ export default function ContactPage() {
                   <p className="mt-2 text-text-secondary">我们会在 1-2 个工作日内与您联系</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="yc-card space-y-5">
+                <form id="inquiry-form" onSubmit={handleSubmit} className="yc-card space-y-5 scroll-mt-24">
                   <h2 className="text-lg font-semibold text-text-primary">发送消息</h2>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
@@ -104,8 +141,33 @@ export default function ContactPage() {
                     <textarea required rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
                       className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm focus:border-brand-400 focus:outline-none resize-none" />
                   </div>
-                  <button type="submit" className="yc-btn-primary w-full justify-center">
-                    <Send className="h-4 w-4" /> 提交
+                  {/* honeypot — hidden from humans, deters bots */}
+                  <input
+                    type="text" name="website" tabIndex={-1} autoComplete="off"
+                    value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })}
+                    aria-hidden="true" className="hidden"
+                    style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }}
+                  />
+                  <label className="flex items-start gap-2 text-sm text-text-secondary">
+                    <input
+                      type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-brand-600 focus:ring-brand-400"
+                    />
+                    <span>
+                      我已阅读并同意
+                      <a href="/privacy" className="text-brand-600 hover:underline">《隐私政策》</a>
+                      与
+                      <a href="/terms" className="text-brand-600 hover:underline">《服务条款》</a>
+                      ，同意平台为响应本次咨询处理我提交的联系信息。
+                    </span>
+                  </label>
+                  {error && (
+                    <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                      {error}
+                    </div>
+                  )}
+                  <button type="submit" disabled={loading} className="yc-btn-primary w-full justify-center disabled:opacity-60">
+                    <Send className="h-4 w-4" /> {loading ? "提交中…" : "提交"}
                   </button>
                 </form>
               )}
@@ -125,11 +187,7 @@ export default function ContactPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-brand-500 shrink-0" />
-                    <p className="text-sm text-text-secondary">contact@yance.ai</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-4 w-4 text-brand-500 shrink-0" />
-                    <p className="text-sm text-text-secondary">021-8888-9999</p>
+                    <p className="text-sm text-text-secondary">contact@yanglaoai999.com</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <MapPin className="h-4 w-4 text-brand-500 shrink-0" />
@@ -138,21 +196,21 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-silver-50 aspect-[4/3] flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="mx-auto h-8 w-8 text-silver-300" />
-                  <p className="mt-2 text-xs text-text-muted">地图占位</p>
-                </div>
+              <div className="yc-card">
+                <h3 className="text-sm font-semibold text-text-primary mb-2">响应与处理时效</h3>
+                <p className="text-sm leading-relaxed text-text-secondary">
+                  通过本页表单或上述邮箱提交后，我们在工作日 1–2 个工作日内回复。涉及个人数据查询、更正或删除的请求，将在身份核实后按《隐私政策》处理。
+                </p>
               </div>
 
               <div className="yc-card bg-brand-600 border-brand-600 text-white">
                 <Calendar className="h-8 w-8 mb-3 text-brand-200" />
                 <h3 className="text-lg font-bold">预约产品演示</h3>
                 <p className="mt-2 text-sm text-brand-100">
-                  预约一对一产品演示，了解衍策银龄 AI 如何帮助您的业务
+                  填写上方表单并选择感兴趣的产品，我们会尽快与您联系安排一对一演示。
                 </p>
-                <a href="mailto:demo@yance.ai" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50">
-                  预约演示 <Mail className="h-4 w-4" />
+                <a href="#inquiry-form" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50">
+                  填写咨询表单 <Send className="h-4 w-4" />
                 </a>
               </div>
             </div>

@@ -13,9 +13,9 @@ const SCENARIOS = [
 ];
 
 const PRODUCTS = [
-  { icon: "📖", title: "银发经济政策数据库", desc: "收录全国1000+养老政策，AI智能匹配，覆盖30+城市", href: "/policies" },
+  { icon: "📖", title: "银发经济政策数据库", desc: "汇集各地养老政策与补贴信息，AI 智能匹配资格，持续扩充覆盖", href: "/policies" },
   { icon: "💊", title: "陪诊护理服务CRM", desc: "老人档案、订单管理、服务记录、家属通知一站式", href: "/care-crm" },
-  { icon: "🏢", title: "养老机构销售线索库", desc: "5000+养老机构画像，数字化评分，销售线索管理", href: "/institutions" },
+  { icon: "🏢", title: "养老机构销售线索库", desc: "养老机构画像与数字化评分，销售线索管理", href: "/institutions" },
 ];
 
 const TOOLS_PREVIEW = [

@@ -4,22 +4,22 @@ import { Heart } from "lucide-react";
 const productLinks = [
   { href: "/pricing", label: "产品定价" },
   { href: "/dashboard", label: "工作台" },
-  { href: "#", label: "政策数据库" },
-  { href: "#", label: "陪诊CRM" },
+  { href: "/policies", label: "政策数据库" },
+  { href: "/care-crm", label: "陪诊CRM" },
 ];
 
 const resourceLinks = [
-  { href: "#", label: "帮助文档" },
-  { href: "#", label: "API 文档" },
-  { href: "#", label: "行业报告" },
-  { href: "#", label: "合作伙伴" },
+  { href: "/docs", label: "帮助文档" },
+  { href: "/developers", label: "API 文档" },
+  { href: "/resources", label: "行业报告" },
+  { href: "/contact", label: "合作伙伴" },
 ];
 
 const legalLinks = [
   { href: "/compliance", label: "合规声明" },
-  { href: "#", label: "隐私政策" },
-  { href: "#", label: "服务条款" },
-  { href: "#", label: "数据安全" },
+  { href: "/privacy", label: "隐私政策" },
+  { href: "/terms", label: "服务条款" },
+  { href: "/trust", label: "数据安全" },
 ];
 
 export default function Footer() {
@@ -108,9 +108,14 @@ export default function Footer() {
             <p className="text-xs text-text-muted">
               &copy; {new Date().getFullYear()} 上海衍策引擎人工智能科技有限公司
             </p>
-            <p className="text-xs text-text-muted">
-              沪ICP备2025XXXXXX号-1
-            </p>
+            <a
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-text-muted hover:text-brand-600"
+            >
+              ICP 备案信息查询（beian.miit.gov.cn）
+            </a>
           </div>
 
           {/* Disclaimer */}
