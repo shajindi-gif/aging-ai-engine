@@ -203,7 +203,7 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="yc-card bg-brand-600 border-brand-600 text-white">
+              <div className="rounded-xl border border-brand-600 bg-brand-600 p-6 text-white">
                 <Calendar className="h-8 w-8 mb-3 text-brand-200" />
                 <h3 className="text-lg font-bold">预约产品演示</h3>
                 <p className="mt-2 text-sm text-brand-100">

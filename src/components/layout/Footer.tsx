@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Heart } from "lucide-react";
 
 const productLinks = [
   { href: "/pricing", label: "产品定价" },
@@ -30,9 +29,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
-                <Heart className="h-4 w-4 text-white" fill="white" />
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-base font-bold text-white">
+                龄
               </div>
               <span className="text-base font-semibold text-text-primary">
                 衍策银龄 AI
