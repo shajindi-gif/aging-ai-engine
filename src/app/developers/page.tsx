@@ -57,46 +57,55 @@ export default function DevelopersPage() {
         </div>
 
         <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+          {/* 真实状态总览 */}
+          <section className="mb-10">
+            <div className="rounded-xl border border-gold-200 bg-gold-50 px-5 py-4">
+              <p className="text-sm font-semibold text-gold-800">当前真实可用状态（如实说明）</p>
+              <ul className="mt-2 space-y-1 text-xs leading-relaxed text-text-secondary">
+                <li>· REST API：本站 <code className="rounded bg-white px-1">/api/policies</code> 等只读接口可直接调用（无需密钥，公开数据）；写操作与个人数据接口需登录会话。</li>
+                <li>· TypeScript SDK / MCP Server：源码已开发，<strong>尚未发布到 npm</strong>，安装命令暂不可用；需通过联系我们获取源码包与接入说明。</li>
+                <li>· 商业化 API Key / 计量计费：规划中，未上线。</li>
+              </ul>
+            </div>
+          </section>
+
           {/* API Overview */}
           <section className="mb-10">
             <h2 className="mb-4 text-lg font-semibold">API Overview</h2>
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="yc-card p-5">
-                <h3 className="text-sm font-semibold">TypeScript SDK</h3>
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">npm 安装，命名空间 API，完整类型定义</p>
-                <code className="mt-2 block rounded bg-[var(--color-silver-900)] p-2 text-xs text-green-400">npm install @aging-ai/sdk</code>
+                <h3 className="text-sm font-semibold">REST API <span className="yc-badge yc-badge-success ml-1">已可用</span></h3>
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">公开数据只读接口，JSON 格式，无需密钥</p>
+                <code className="mt-2 block rounded bg-[var(--color-silver-900)] p-2 text-xs text-green-400">GET https://&lt;本站域名&gt;/api/policies</code>
               </div>
               <div className="yc-card p-5">
-                <h3 className="text-sm font-semibold">REST API</h3>
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">标准 RESTful 接口，JSON 格式，CORS 支持</p>
-                <code className="mt-2 block rounded bg-[var(--color-silver-900)] p-2 text-xs text-green-400">GET /api/policies</code>
+                <h3 className="text-sm font-semibold">TypeScript SDK <span className="yc-badge yc-badge-gold ml-1">内测·未发布 npm</span></h3>
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">源码已开发，联系获取源码包后本地构建使用</p>
+                <code className="mt-2 block rounded bg-[var(--color-silver-900)] p-2 text-xs text-green-400">联系我们获取 → npm run build</code>
               </div>
               <div className="yc-card p-5">
-                <h3 className="text-sm font-semibold">MCP Server</h3>
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">12 个 AI 工具，stdio 传输，可集成到 Claude/Cursor</p>
-                <code className="mt-2 block rounded bg-[var(--color-silver-900)] p-2 text-xs text-green-400">npx @aging-ai/mcp-server</code>
+                <h3 className="text-sm font-semibold">MCP Server <span className="yc-badge yc-badge-gold ml-1">内测·未发布 npm</span></h3>
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">源码已开发（stdio 传输），联系获取后本地运行</p>
+                <code className="mt-2 block rounded bg-[var(--color-silver-900)] p-2 text-xs text-green-400">联系我们获取 → node dist/index.js</code>
               </div>
             </div>
           </section>
 
           {/* Quick Start */}
           <section className="mb-10">
-            <h2 className="mb-4 text-lg font-semibold">快速开始</h2>
+            <h2 className="mb-4 text-lg font-semibold">快速开始（REST API，立即可用）</h2>
             <div className="yc-card p-6">
               <div className="rounded-lg bg-[var(--color-silver-900)] p-4 text-sm text-silver-200">
-                <pre className="overflow-x-auto text-xs text-[#a5f3fc]">{`// 1. 安装 SDK
-npm install @aging-ai/sdk
+                <pre className="overflow-x-auto text-xs text-[#a5f3fc]">{`# 1. 查询政策库（公开只读接口，无需密钥）
+curl "https://yanglaoai999.com/api/policies?city=上海&page=1&pageSize=10"
 
-// 2. 初始化客户端
-import { AgingAI } from '@aging-ai/sdk';
-const client = new AgingAI({
-  apiKey: process.env.AGING_AI_API_KEY,  // API Key (占位)
-  baseUrl: 'https://api.aging-ai.example.com',
-});
+# 2. 查询机构库
+curl "https://yanglaoai999.com/api/institutions?page=1&pageSize=10"
 
-// 3. 调用 API
-const policies = await client.policies.list({ region: '上海' });`}</pre>
+# 3. SDK / MCP Server（内测）：联系我们获取源码包
+#    获取后：解压 → npm install → npm run build → 按包内 README 接入`}</pre>
               </div>
+              <p className="mt-3 text-xs text-[var(--color-text-muted)]">说明：涉及个人数据或写操作的接口需登录会话，暂不对外开放 API Key。</p>
             </div>
           </section>
 

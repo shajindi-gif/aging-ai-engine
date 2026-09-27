@@ -101,23 +101,23 @@ export default function ContactPage() {
                   <h2 className="text-lg font-semibold text-text-primary">发送消息</h2>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-medium text-text-primary mb-1.5">姓名 *</label>
-                      <input required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      <label htmlFor="ct-name" className="block text-sm font-medium text-text-primary mb-1.5">姓名 *</label>
+                      <input id="ct-name" required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                         className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm focus:border-brand-400 focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-text-primary mb-1.5">公司</label>
-                      <input type="text" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })}
+                      <label htmlFor="ct-company" className="block text-sm font-medium text-text-primary mb-1.5">公司</label>
+                      <input id="ct-company" type="text" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })}
                         className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm focus:border-brand-400 focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-text-primary mb-1.5">邮箱 *</label>
-                      <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      <label htmlFor="ct-email" className="block text-sm font-medium text-text-primary mb-1.5">邮箱 *</label>
+                      <input id="ct-email" required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                         className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm focus:border-brand-400 focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-text-primary mb-1.5">电话</label>
-                      <input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      <label htmlFor="ct-phone" className="block text-sm font-medium text-text-primary mb-1.5">电话</label>
+                      <input id="ct-phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm focus:border-brand-400 focus:outline-none" />
                     </div>
                   </div>
@@ -137,15 +137,15 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1.5">留言 *</label>
-                    <textarea required rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    <label htmlFor="ct-message" className="block text-sm font-medium text-text-primary mb-1.5">留言 *</label>
+                    <textarea id="ct-message" required rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
                       className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm focus:border-brand-400 focus:outline-none resize-none" />
                   </div>
                   {/* honeypot — hidden from humans, deters bots */}
                   <input
                     type="text" name="website" tabIndex={-1} autoComplete="off"
                     value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })}
-                    aria-hidden="true" className="hidden"
+                    aria-hidden="true" tabIndex={-1} className="hidden"
                     style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0 }}
                   />
                   <label className="flex items-start gap-2 text-sm text-text-secondary">

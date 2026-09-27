@@ -3,106 +3,100 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Check, X as XIcon, ArrowRight, Heart, Building2, Sparkles, Database, Globe } from "lucide-react";
 
+// 说明：included=true 为当前版本已可使用的功能；included:"planned" 表示规划中、开通前会与您确认
 const tiers = [
   {
     name: "免费演示版",
     price: "免费",
     priceNote: "永久免费",
     icon: Heart,
-    desc: "快速体验核心功能，适合个人了解和演示",
+    desc: "注册即用，体验全部核心流程（当前开放）",
     highlight: false,
     cta: "立即体验",
     href: "/dashboard",
     features: [
-      { text: "10 个老人档案", included: true },
-      { text: "政策库基础查询（12条）", included: true },
-      { text: "AI 补贴匹配（3次/月）", included: true },
-      { text: "基础订单管理", included: true },
-      { text: "Agent 体验（1个Agent）", included: true },
+      { text: "老人档案与照护记录（数量暂未限制）", included: true },
+      { text: "政策库查询（演示数据 41 条）", included: true },
+      { text: "补贴初筛与全部 10 个免费工具", included: true },
+      { text: "订单与服务记录管理", included: true },
+      { text: "健康 OS：活动测试/每日打卡/家属看板", included: true },
+      { text: "AI 摘要（规则模式）", included: true },
       { text: "API 接口", included: false },
       { text: "数据导出", included: false },
-      { text: "技术支持", included: false },
     ],
+    note: "试用条件：无需付费、无需绑定支付方式，注册即可用。",
   },
   {
     name: "小团队版",
     price: "¥980",
-    priceNote: "/月",
+    priceNote: "/月（意向价，正式售卖前可谈）",
     icon: Globe,
     desc: "适合小型陪诊团队和社区服务站",
     highlight: false,
     cta: "联系咨询开通",
     href: "/contact",
     features: [
-      { text: "100 个老人档案", included: true },
-      { text: "全量政策数据库", included: true },
-      { text: "AI 补贴匹配（50次/月）", included: true },
-      { text: "完整 CRM 功能", included: true },
-      { text: "Agent 工作台（3个Agent）", included: true },
-      { text: "基础 API 接口（1,000次/月）", included: true },
-      { text: "数据导出", included: false },
+      { text: "免费版全部功能", included: true },
+      { text: "团队成员协作（开发中）", included: "planned" },
+      { text: "政策库扩容与更新（以实际收录为准）", included: true },
+      { text: "API 接口（额度开通时约定）", included: "planned" },
+      { text: "数据导出（开发中）", included: "planned" },
       { text: "专属技术支持", included: false },
     ],
+    note: "试用条件：联系后人工开通，试用期与范围双方约定。",
   },
   {
     name: "专业版",
     price: "¥2,980",
-    priceNote: "/月",
+    priceNote: "/月（意向价，正式售卖前可谈）",
     icon: Sparkles,
-    desc: "适合中型护理团队，解锁全部 AI 能力",
+    desc: "适合中型护理团队",
     highlight: true,
     cta: "联系咨询开通",
     href: "/contact",
     features: [
-      { text: "500 个老人档案", included: true },
-      { text: "全量政策数据库 + 实时更新", included: true },
-      { text: "无限 AI 补贴匹配", included: true },
-      { text: "完整 CRM + 智能派单", included: true },
-      { text: "全部 9 个 Agent", included: true },
-      { text: "API 接口（10,000次/月）", included: true },
-      { text: "数据导出 + 报表", included: true },
-      { text: "工单 + 在线技术支持", included: true },
+      { text: "小团队版全部功能", included: true },
+      { text: "AI Care Agent 摘要与任务/提醒（规则模式已上线，LLM 增强规划中）", included: true },
+      { text: "家属看板与报告导出（报告导出开发中）", included: "planned" },
+      { text: "批量管理与报表（开发中）", included: "planned" },
+      { text: "在线技术支持（工单系统规划中，当前微信/邮件支持）", included: true },
     ],
+    note: "试用条件：联系后人工开通，试用期与范围双方约定。",
   },
   {
     name: "数据库订阅版",
     price: "¥4,980",
-    priceNote: "/月",
+    priceNote: "/月（意向价，正式售卖前可谈）",
     icon: Database,
-    desc: "适合养老SaaS厂商和设备供应商",
+    desc: "适合养老 SaaS 厂商和设备供应商",
     highlight: false,
     cta: "联系销售",
     href: "/contact",
     features: [
-      { text: "养老机构销售线索库", included: true },
-      { text: "机构数字化成熟度评分", included: true },
-      { text: "全量政策数据 API 访问", included: true },
-      { text: "线索批量导出", included: true },
-      { text: "Pipeline 看板 + 智能跟进", included: true },
-      { text: "API 接口（50,000次/月）", included: true },
-      { text: "数据定制报表", included: true },
-      { text: "专属客户成功经理", included: true },
+      { text: "养老机构线索库在线查询（演示数据 80 家）", included: true },
+      { text: "机构数字化成熟度评分工具", included: true },
+      { text: "政策数据 API（需联调）", included: "planned" },
+      { text: "线索批量导出（开发中）", included: "planned" },
+      { text: "定制报表（开发中）", included: "planned" },
     ],
+    note: "试用条件：联系后提供测试数据样例与联调支持。",
   },
   {
     name: "园区/街道定制版",
     price: "联系销售",
-    priceNote: "",
+    priceNote: "按项目报价",
     icon: Building2,
     desc: "适合大型养老集团、园区和街道",
     highlight: false,
     cta: "预约演示",
     href: "/contact",
     features: [
-      { text: "无限老人档案", included: true },
-      { text: "全量功能 + 定制化模块", included: true },
-      { text: "专属部署（私有云/混合云）", included: true },
-      { text: "SLA 保障（99.9%）", included: true },
-      { text: "自定义 Agent 开发", included: true },
-      { text: "API 无限制调用", included: true },
-      { text: "数据合规审计支持", included: true },
-      { text: "专属客户经理 + 驻场支持", included: true },
+      { text: "定制化模块开发（需求评估后报价）", included: true },
+      { text: "私有化部署（可评估实施）", included: true },
+      { text: "SLA 与驻场支持（以合同约定为准）", included: true },
+      { text: "自定义 Agent / API（评估后开发）", included: true },
     ],
+    note: "交付周期：标准定制 4-8 周（视需求而定）。",
   },
 ];
 
@@ -160,18 +154,28 @@ export default function PricingPage() {
                 <ul className="space-y-2">
                   {tier.features.map((feat) => (
                     <li key={feat.text} className="flex items-start gap-2 text-xs">
-                      {feat.included ? (
+                      {feat.included === true ? (
                         <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />
+                      ) : feat.included === "planned" ? (
+                        <span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-gold-100 text-[9px] font-bold text-gold-700">划</span>
                       ) : (
                         <XIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-silver-300" />
                       )}
-                      <span className={feat.included ? "text-text-secondary" : "text-text-muted"}>{feat.text}</span>
+                      <span className={feat.included === true ? "text-text-secondary" : "text-text-muted"}>{feat.text}</span>
                     </li>
                   ))}
                 </ul>
+                {tier.note && (
+                  <p className="mt-4 rounded-lg bg-silver-50 px-3 py-2 text-[11px] leading-relaxed text-text-muted">{tier.note}</p>
+                )}
               </div>
             ))}
           </div>
+          <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-relaxed text-text-muted">
+            图例：<Check className="inline h-3.5 w-3.5 text-brand-500" /> 当前版本已可用 ·
+            <span className="ml-1 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-gold-100 text-[9px] font-bold text-gold-700 align-middle">划</span> 规划中（开通前会与您确认时间表）·
+            <XIcon className="ml-1 inline h-3.5 w-3.5 text-silver-300" /> 暂不提供。销售路径：各套餐按钮均进入联系表单，1-2 个工作日回复。
+          </p>
         </div>
       </section>
 

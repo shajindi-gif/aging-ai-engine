@@ -24,11 +24,7 @@ export default function CTASection({
           </a>
           <a href="/demo"
             className={`rounded-md border px-5 py-2.5 text-sm font-medium transition ${isBrand ? "border-white/30 text-white hover:bg-white/10" : "border-[var(--color-border)] text-[var(--color-text-primary)] hover:border-[var(--color-brand-300)]"}`}>
-            预约演示
-          </a>
-          <a href="/pricing"
-            className={`rounded-md border px-5 py-2.5 text-sm font-medium transition ${isBrand ? "border-white/30 text-white hover:bg-white/10" : "border-[var(--color-border)] text-[var(--color-text-primary)] hover:border-[var(--color-brand-300)]"}`}>
-            查看定价
+            查看五分钟演示路线
           </a>
         </div>
       </div>

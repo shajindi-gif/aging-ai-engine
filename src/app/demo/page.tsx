@@ -5,23 +5,16 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Clock, ArrowRight, Download, Sparkles, ListChecks } from "lucide-react";
 
-// 页面导览路线：链接均为站内真实可打开的功能页（含演示数据，均已标注）
+// 五分钟主推路线：虚构老人「王秀兰」贯穿（演示数据已 seed，可重复执行）
+const fiveMinScript = [
+  { step: "0:00-1:00", label: "看主客户叙事与四步流程", href: "/", how: "首页首屏：陪诊/护理团队的问题与解决方案" },
+  { step: "1:00-2:00", label: "用虚构资料跑一次补贴初筛", href: "/tools/subsidy-checker", how: "输入：上海 / 78 / 失能 / 独居，查看规则初筛结果与免责说明" },
+  { step: "2:00-3:00", label: "体验建档与服务记录", href: "/onboarding", how: "填写虚构老人信息创建档案；再打开 /care-orders 看订单列表" },
+  { step: "3:00-4:00", label: "生成家属报告", href: "/tools/family-care-report", how: "输入虚构照护记录，查看生成的报告草稿（虚构样例）" },
+  { step: "4:00-5:00", label: "登录看家属看板（王秀兰）", href: "/login", how: "用演示账号登录 → /family 看健康趋势、AI 摘要与任务提醒" },
+];
+
 const scenarios = [
-  {
-    title: "5 分钟快速导览",
-    subtitle: "适合快速了解产品形态",
-    time: "约 5 分钟",
-    points: [
-      "首页补贴初筛工具（输入即出结果）",
-      "政策数据库检索（演示数据 41 条）",
-      "工作台登录入口",
-    ],
-    steps: [
-      { label: "第 1 步：跑一次补贴初筛工具", href: "/tools/subsidy-checker" },
-      { label: "第 2 步：浏览政策数据库", href: "/policies" },
-      { label: "第 3 步：注册/登录进入工作台", href: "/login" },
-    ],
-  },
   {
     title: "10 分钟产品导览",
     subtitle: "适合了解照护服务管理流程",
@@ -72,8 +65,43 @@ export default function DemoPage() {
       </section>
 
       <section className="bg-surface py-16">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          {/* 五分钟主推路线：虚构老人贯穿 */}
+          <div className="rounded-2xl border border-brand-200 bg-white p-6 sm:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <span className="yc-badge yc-badge-brand">推荐 · 可重复执行</span>
+                <h2 className="mt-3 text-xl font-bold text-text-primary sm:text-2xl">五分钟产品演示（虚构老人「王秀兰」）</h2>
+                <p className="mt-1.5 text-sm text-text-secondary">全程使用站内真实功能页与虚构演示数据，可重复执行；每步标注时间与操作要点。</p>
+              </div>
+              <div className="rounded-xl bg-silver-50 px-4 py-3 text-xs text-text-secondary">
+                演示账号：<span className="font-mono font-semibold text-text-primary">demo@yanglaoai999.com</span> / <span className="font-mono font-semibold text-text-primary">demo123456</span>
+              </div>
+            </div>
+            <ol className="mt-6 space-y-3">
+              {fiveMinScript.map((s) => (
+                <li key={s.step}>
+                  <Link href={s.href} className="group flex flex-col gap-1 rounded-xl border border-border px-4 py-3 transition hover:border-brand-300 hover:bg-brand-50/40 sm:flex-row sm:items-center sm:gap-4">
+                    <span className="w-24 shrink-0 font-mono text-xs font-semibold text-brand-700">{s.step}</span>
+                    <span className="flex-1">
+                      <span className="block text-sm font-medium text-text-primary">{s.label}</span>
+                      <span className="mt-0.5 block text-xs text-text-secondary">{s.how}</span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition group-hover:translate-x-0.5 group-hover:text-brand-600" />
+                  </Link>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-4 text-xs leading-relaxed text-text-muted">
+              说明：演示中的老人资料（王秀兰，76 岁）为虚构演示数据；工具结果由规则模板生成并标注「虚构样例演示」；健康类页面不替代医疗诊断。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-surface py-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-2">
             {scenarios.map((s) => (
               <div key={s.title} className="yc-card flex flex-col">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
