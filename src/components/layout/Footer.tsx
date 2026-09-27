@@ -2,9 +2,10 @@ import Link from "next/link";
 
 const productLinks = [
   { href: "/pricing", label: "产品定价" },
-  { href: "/dashboard", label: "工作台" },
-  { href: "/policies", label: "政策数据库" },
-  { href: "/care-crm", label: "陪诊CRM" },
+  { href: "/elder", label: "老人端" },
+  { href: "/family", label: "家属看板" },
+  { href: "/care-center", label: "机构看板" },
+  { href: "/alerts", label: "提醒中心" },
 ];
 
 const resourceLinks = [

@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
 import {
   SiteHeader,
@@ -55,7 +54,6 @@ const STATS = [
 ];
 
 export default function HomePage() {
-  const [input, setInput] = useState("");
 
   return (
     <>
@@ -65,55 +63,27 @@ export default function HomePage() {
         <section className="bg-surface-secondary">
           <div className="yc-container yc-section text-center">
             <div className="mx-auto max-w-3xl">
-              <span className="yc-eyebrow">Aging AI Engine</span>
-              <h1 className="mt-3 text-4xl font-bold tracking-tight text-text-primary sm:text-5xl">
-                衍策银龄 AI
+              <span className="yc-eyebrow">YanglaoAI · SilverCare OS</span>
+              <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-text-primary sm:text-5xl">
+                面向老年人的 AI 健康风险预测、康复与照护操作系统
               </h1>
-              <p className="mt-3 text-lg font-medium text-text-secondary sm:text-xl">
-                面向中国银发经济的 AI 原生养老服务基础设施
-              </p>
               <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-text-muted">
-                用 AI Agent、政策知识库和 SaaS 工作流，帮助老人家庭、陪诊护理公司、社区服务站和养老机构，把养老服务从微信群、Excel 和纸质档案，升级为可追踪、可提醒、可复盘的数字化系统。
+                通过计算机视觉、健康数据分析和 AI Agent，持续识别老年人的跌倒、衰弱与健康异常趋势，并协同家属、护理员和社区完成日常照护。
               </p>
             </div>
 
-            {/* AI 匹配输入框 — 唯一主行动 */}
-            <div className="mx-auto mt-9 max-w-2xl">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  window.location.href = "/tools/subsidy-checker";
-                }}
-                className="flex items-center gap-1.5 rounded-xl border border-border bg-white p-1.5 shadow-sm transition focus-within:border-brand-300 focus-within:ring-2 focus-within:ring-brand-100"
-              >
-                <Search className="ml-2.5 h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  aria-label="输入老人所在城市、年龄、照护情况"
-                  placeholder="输入老人所在城市、年龄、照护情况，匹配可申请的养老补贴和服务路径"
-                  className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm text-text-primary outline-none placeholder:text-text-muted"
-                />
-                <button
-                  type="submit"
-                  className="shrink-0 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700 active:translate-y-px"
-                >
-                  立即匹配
-                </button>
-              </form>
-              <p className="mt-2.5 text-xs text-text-muted">
-                例如：上海 78 岁 独居 高血压 → 匹配高龄津贴、长护险、适老化改造等补贴
-              </p>
-              <div className="mt-6">
-                <Link
-                  href="/demo"
-                  className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline"
-                >
-                  查看完整 Demo <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
+            {/* 主行动 */}
+            <div className="mx-auto mt-9 flex max-w-2xl flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link href="/elder/mobility" className="yc-btn-primary w-full px-7 py-3.5 text-base sm:w-auto">
+                体验 AI 健康评估
+              </Link>
+              <Link href="/family" className="yc-btn-secondary w-full px-7 py-3.5 text-base sm:w-auto">
+                查看 Demo
+              </Link>
             </div>
+            <p className="mt-3 text-xs text-text-muted">
+              演示数据为虚构家庭。本产品用于健康管理与风险提示，不替代专业医疗诊断。
+            </p>
           </div>
         </section>
 

@@ -149,6 +149,11 @@ model ElderlyProfile {
   carePlans       CarePlan[]
   cases           Case[]
   chronicMetrics  ChronicMetric[]
+  mobilityAssessments MobilityAssessment[]
+  fallRiskScores  FallRiskScore[]
+  careTasks       CareTask[]
+  healthAlerts    HealthAlert[]
+  careAgentRuns   CareAgentRun[]
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
@@ -277,6 +282,17 @@ model ChronicMetric {
   heartRate     Int?
   weight        Float?
   temperature   Float?
+  // SilverCare MVP 扩展：心肺与活动指标
+  spo2            Int?      // 血氧饱和度 %
+  respiratoryRate Int?      // 呼吸频率 次/分
+  steps           Int?      // 每日步数
+  sleepHours      Float?    // 睡眠时长 小时
+  coughLevel      Int?      // 咳嗽程度 0-10
+  dyspneaLevel    Int?      // 呼吸困难程度 0-10
+  chestTightness  Int?      // 胸闷程度 0-10
+  fatigueLevel    Int?      // 疲劳程度 0-10
+  restingHR       Int?      // 静息心率
+  source          String    @default("manual") // manual | device | demo
   notes         String?
   elderly       ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
   createdAt     DateTime       @default(now())
@@ -1051,5 +1067,104 @@ model ContactMessage {
   updatedAt DateTime @updatedAt
 
   @@index([status])
+  @@index([createdAt])
+}
+
+// ═══════════════════════════════════════════
+// SILVERCARE MVP — 健康风险预测 / 康复 / 照护
+// ═══════════════════════════════════════════
+
+// 运动能力评估（起立/步行/平衡测试）
+model MobilityAssessment {
+  id          String   @id @default(cuid())
+  elderlyId   String
+  testType    String   // STS(起立5次) | WALK(步行) | BALANCE(平衡)
+  reps        Int?     // 完成次数
+  durationSec Float?   // 总耗时（起立/步行）
+  holdTimeSec Float?   // 坚持时间（平衡）
+  swayScore   Float?   // 晃动程度 0-100（越低越稳）
+  stability   String?  // 左右对称/稳定程度描述
+  notes       String?
+  source      String   @default("manual") // manual | camera
+  confidence  Float    @default(0.5)
+  elderly     ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([elderlyId])
+  @@index([testType])
+}
+
+// 跌倒/衰弱风险评分（规则型 MVP，非临床验证）
+model FallRiskScore {
+  id              String   @id @default(cuid())
+  elderlyId       String
+  assessmentId    String?
+  score           Int      // 0-100
+  level           String   // LOW | MODERATE | HIGH
+  frailtyLevel    String   // LOW | MODERATE | HIGH
+  factors         Json     // [{factor, weight, detail}]
+  recommendations String[]
+  source          String   @default("rule-engine")
+  experimental    Boolean  @default(true)
+  elderly         ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  @@index([elderlyId])
+  @@index([createdAt])
+}
+
+// 照护任务
+model CareTask {
+  id            String    @id @default(cuid())
+  elderlyId     String
+  title         String
+  type          String    // VITALS_BP | VITALS_SPO2 | MEDICATION | REHAB | WALK | WATER | CLINIC | FOLLOWUP | FAMILY_CONTACT | CAREGIVER_VISIT
+  status        String    @default("PENDING") // PENDING | COMPLETED | MISSED | CANCELLED
+  priority      String    @default("NORMAL") // LOW | NORMAL | HIGH | URGENT
+  scheduledTime DateTime?
+  completedAt   DateTime?
+  notes         String?
+  source        String    @default("agent") // agent | manual
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  elderly       ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+  @@index([elderlyId])
+  @@index([status])
+  @@index([scheduledTime])
+}
+
+// 异常事件 / 提醒中心
+model HealthAlert {
+  id             String   @id @default(cuid())
+  elderlyId      String
+  level          Int      // 1=普通提醒 2=需家属关注 3=建议人工介入
+  category       String   // VITALS | ACTIVITY | MOBILITY | SYMPTOM | MISSED_TASK | OTHER
+  title          String
+  message        String
+  status         String   @default("OPEN") // OPEN | ACKNOWLEDGED | RESOLVED
+  acknowledgedAt DateTime?
+  source         String   @default("trend-engine") // trend-engine | agent | manual
+  elderly        ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  @@index([elderlyId])
+  @@index([status])
+  @@index([level])
+  @@index([createdAt])
+}
+
+// SilverCare AI Care Agent 运行记录
+model CareAgentRun {
+  id           String   @id @default(cuid())
+  elderlyId    String
+  mode         String   // llm | rules
+  model        String?
+  inputSummary String?  // 输入快照摘要（不含敏感正文）
+  output       Json     // 结构化结果（Pydantic/TS 校验后）
+  toolsUsed    String[]
+  tokensUsed   Int?
+  durationMs   Int?
+  elderly      ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  @@index([elderlyId])
   @@index([createdAt])
 }
