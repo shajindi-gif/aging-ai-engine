@@ -56,6 +56,12 @@ export default function ElderCheckPage() {
 
   return (
     <ElderShell title="每日健康检测" active="check" elderId={elderId} elderName={elder?.name}>
+      <div className="mb-6 rounded-xl border-2 border-brand-200 bg-brand-50 px-5 py-4">
+        <p className="text-base font-semibold text-brand-800">数据使用告知</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-text-secondary">
+          本次录入的健康指标将保存到您所属机构的账号下，仅用于趋势记录与照护提醒，不用于模型训练、不对外共享；详情见《隐私政策》。当前为演示环境，请使用虚构或已获授权的信息，不要录入真实病历。
+        </p>
+      </div>
       {loading ? <p className="text-lg text-text-secondary">加载中…</p> : !elder ? (
         <p className="text-lg text-text-secondary">请先创建老人档案。</p>
       ) : done ? (

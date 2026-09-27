@@ -139,9 +139,12 @@ const policies = await client.policies.list({ region: '上海' });`}</pre>
                 Aging AI Engine Web Clipper — 浏览政策网页时一键摘要与保存，浏览养老机构网页时一键生成销售线索。
                 Manifest V3，支持 popup 和 sidepanel 两种交互模式。
               </p>
+              <p className="mt-2 text-xs text-[var(--color-text-muted)]">
+                插件尚未公开发布商店安装包；如需在内测阶段试用，请通过联系表单索取安装包与说明。
+              </p>
               <div className="mt-4 flex gap-3">
-                <a href="/demo" className="yc-btn-primary text-xs">下载插件</a>
-                <a href="/demo" className="yc-btn-secondary text-xs">查看说明</a>
+                <a href="/contact" className="yc-btn-primary text-xs">联系我们获取插件</a>
+                <a href="/contact" className="yc-btn-secondary text-xs">咨询接入说明</a>
               </div>
             </div>
           </section>

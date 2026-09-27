@@ -85,8 +85,8 @@ export default function InstitutionsPage() {
             <div>
               <span className="yc-badge yc-badge-brand">销售线索</span>
               <h1 className="mt-3 text-2xl font-bold text-text-primary sm:text-3xl">养老机构销售线索库</h1>
+              <p className="mt-2 text-xs text-text-muted">线索导出功能开发中，当前可在线浏览与筛选。</p>
             </div>
-            <button className="yc-btn-secondary text-sm"><Download className="h-4 w-4" /> 导出线索</button>
           </div>
         </div>
       </section>

@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import {
   SiteHeader,
@@ -54,6 +55,8 @@ const STATS = [
 ];
 
 export default function HomePage() {
+  const [subsidyInput, setSubsidyInput] = useState("");
+  const [subsidyError, setSubsidyError] = useState("");
 
   return (
     <>
@@ -84,6 +87,51 @@ export default function HomePage() {
             <p className="mt-3 text-xs text-text-muted">
               演示数据为虚构家庭。本产品用于健康管理与风险提示，不替代专业医疗诊断。
             </p>
+
+            {/* 补贴初筛入口：输入带入下一页确认（不做静默丢弃） */}
+            <div className="mx-auto mt-10 max-w-2xl text-left">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const text = subsidyInput.trim();
+                  if (!text) {
+                    setSubsidyError("请先填写老人情况，例如「上海 78 岁独居 高血压」");
+                    return;
+                  }
+                  setSubsidyError("");
+                  // 解析城市与年龄，其余作为情况描述带入；无法解析的字段留给下一页确认
+                  const cities = ["上海","北京","深圳","杭州","苏州","广州","成都","武汉","南京","天津","重庆","西安"];
+                  const city = cities.find((c) => text.includes(c)) || "";
+                  const ageMatch = text.match(/(\d{1,3})\s*岁/);
+                  const params = new URLSearchParams();
+                  if (city) params.set("city", city);
+                  if (ageMatch) params.set("age", ageMatch[1]);
+                  params.set("note", text);
+                  window.location.href = `/tools/subsidy-checker?${params.toString()}`;
+                }}
+                className="flex items-center gap-1.5 rounded-xl border border-border bg-white p-1.5 shadow-sm transition focus-within:border-brand-300 focus-within:ring-2 focus-within:ring-brand-100"
+              >
+                <Search className="ml-2.5 h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+                <input
+                  type="text"
+                  value={subsidyInput}
+                  onChange={(e) => { setSubsidyInput(e.target.value); if (subsidyError) setSubsidyError(""); }}
+                  aria-label="输入老人情况进行补贴初筛"
+                  aria-invalid={!!subsidyError}
+                  placeholder="输入老人情况初筛补贴，如：上海 78 岁独居 高血压"
+                  className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm text-text-primary outline-none placeholder:text-text-muted"
+                />
+                <button type="submit" className="shrink-0 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700 active:translate-y-px">
+                  立即匹配
+                </button>
+              </form>
+              {subsidyError && (
+                <p role="alert" className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{subsidyError}</p>
+              )}
+              <p className="mt-2 text-xs text-text-muted">
+                提交后进入「补贴资格初筛工具」，您输入的内容会带入下一页供确认与补充，不会丢失。
+              </p>
+            </div>
           </div>
         </section>
 
