@@ -889,9 +889,12 @@ model Order {
   type          OrderType    @default(ONE_TIME)
   productName   String
   amount        Float
+  amountFen     Int          @default(0) // 金额单位:分（支付以本字段为准）
   currency      String       @default("CNY")
   status        OrderStatus  @default(PENDING)
   items         Json?
+  expireAt      DateTime?    // 未支付超时时间
+  paidAt        DateTime?
   user          User         @relation(fields: [userId], references: [id])
   payments      Payment[]
   createdAt     DateTime     @default(now())
@@ -920,10 +923,16 @@ model Payment {
   provider               PaymentProvider
   providerTransactionId  String?        @unique
   amount                 Float
+  amountFen              Int   @default(0)
   currency               String         @default("CNY")
   status                 PaymentTxStatus @default(PENDING)
+  channel                String?        // PAGE_PAY / WAP_PAY / MOCK
+  prepayRef              String?        // 支付宝返回的跳转参数引用
   paidAt                 DateTime?
   refundedAt             DateTime?
+  refundNo               String?        @unique
+  refundAmountFen        Int?
+  notifyRaw              Json?          // 回调原文（用于对账排障）
   metadata               Json?
   order                  Order          @relation(fields: [orderId], references: [id])
   createdAt              DateTime       @default(now())
@@ -931,6 +940,20 @@ model Payment {
   @@index([orderId])
   @@index([status])
   @@index([providerTransactionId])
+}
+
+// 支付异步通知去重/留痕（幂等）
+model PaymentNotifyLog {
+  id          String   @id @default(cuid())
+  provider    String
+  tradeNo     String   // 渠道交易号
+  outTradeNo  String   // 商户订单号
+  handled     Boolean  @default(false)
+  result      String   // processed | duplicate | rejected:原因
+  payloadHash String?
+  createdAt   DateTime @default(now())
+  @@index([outTradeNo])
+  @@index([tradeNo])
 }
 
 enum PaymentProvider {

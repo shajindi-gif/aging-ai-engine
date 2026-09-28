@@ -52,8 +52,8 @@ const tiers = [
     icon: Sparkles,
     desc: "适合中型护理团队",
     highlight: true,
-    cta: "联系咨询开通",
-    href: "/contact",
+    cta: "在线购买（支付宝）",
+    href: "/checkout/new?product=pro-monthly",
     features: [
       { text: "小团队版全部功能", included: true },
       { text: "AI Care Agent 摘要与任务/提醒（规则模式已上线，LLM 增强规划中）", included: true },
