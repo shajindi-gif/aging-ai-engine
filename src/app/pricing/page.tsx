@@ -52,7 +52,7 @@ const tiers = [
     icon: Sparkles,
     desc: "适合中型护理团队",
     highlight: true,
-    cta: "在线购买（支付宝）",
+    cta: "在线购买（支付宝/微信）",
     href: "/checkout/new?product=pro-monthly",
     features: [
       { text: "小团队版全部功能", included: true },

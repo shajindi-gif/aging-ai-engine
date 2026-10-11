@@ -1,10 +1,10 @@
 // @ts-nocheck
-// 支付状态查询（前端轮询）+ 丢单兜底（主动查支付宝）
+// 支付状态查询（前端轮询）+ 双渠道丢单兜底（主动查支付宝/微信）
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getOrderWithPayment } from "@/lib/payments/core";
+import { getOrderWithPayment, handlePaidNotify } from "@/lib/payments/core";
 import { isAlipayConfigured, queryTrade } from "@/lib/payments/alipay";
-import { handlePaidNotify } from "@/lib/payments/core";
+import { isWechatConfigured, queryWechatOrder } from "@/lib/payments/wechat";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -15,19 +15,32 @@ export async function GET(request: NextRequest) {
   let order = await getOrderWithPayment(orderNo, session.user.id || session.user.sub);
   if (!order) return NextResponse.json({ success: false, error: "订单不存在" }, { status: 404 });
 
-  // 丢单兜底：本地仍 PENDING 且支付宝已配置时，主动查单补状态
-  if (order.status === "PENDING" && isAlipayConfigured()) {
-    const q = await queryTrade(order.orderNo);
-    if (q && (q.tradeStatus === "TRADE_SUCCESS" || q.tradeStatus === "TRADE_FINISHED")) {
-      const payment = order.payments.find((p) => p.provider === "ALIPAY");
-      if (payment && !payment.providerTransactionId) {
+  // 丢单兜底：本地仍 PENDING 时主动查单补状态
+  if (order.status === "PENDING") {
+    const payment = order.payments[0];
+    if (payment?.provider === "WECHAT_PAY" && isWechatConfigured()) {
+      const q = await queryWechatOrder(order.orderNo);
+      if (q && q.tradeState === "SUCCESS" && q.transactionId && !payment.providerTransactionId) {
+        await handlePaidNotify({
+          provider: "WECHAT_PAY",
+          outTradeNo: order.orderNo,
+          tradeNo: q.transactionId,
+          tradeStatus: "TRADE_SUCCESS",
+          totalAmountYuan: ((q.payerTotal ?? order.amountFen) / 100).toFixed(2),
+          raw: { source: "query_fallback", trade_state: q.tradeState },
+        });
+        order = (await getOrderWithPayment(orderNo, session.user.id || session.user.sub))!;
+      }
+    } else if (isAlipayConfigured()) {
+      const q = await queryTrade(order.orderNo);
+      if (q && (q.tradeStatus === "TRADE_SUCCESS" || q.tradeStatus === "TRADE_FINISHED") && q.tradeNo && !payment?.providerTransactionId) {
         await handlePaidNotify({
           provider: "ALIPAY",
           outTradeNo: order.orderNo,
-          tradeNo: payment.providerTransactionId || `QUERY-${order.orderNo}`,
+          tradeNo: q.tradeNo,
           tradeStatus: q.tradeStatus,
-          totalAmountYuan: q.totalAmount || String(order.amountFen / 100),
-          raw: { source: "query_fallback", trade_status: q.tradeStatus, total_amount: q.totalAmount },
+          totalAmountYuan: q.totalAmountYuan || String(order.amountFen / 100),
+          raw: { source: "query_fallback", trade_status: q.tradeStatus },
         });
         order = (await getOrderWithPayment(orderNo, session.user.id || session.user.sub))!;
       }
@@ -44,6 +57,7 @@ export async function GET(request: NextRequest) {
       productName: order.productName,
       paidAt: order.paidAt,
       paymentStatus: payment?.status,
+      provider: payment?.provider,
     },
   });
 }
