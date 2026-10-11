@@ -20,6 +20,16 @@ export const PAY_PRODUCTS: Record<string, PayProduct> = {
     description: "陪诊护理团队专业版服务一个月",
     active: true,
   },
+  // 1 分钱真实联调商品（验证后可在支付宝/微信后台原路退款）
+  "test-1fen": {
+    id: "test-1fen",
+    name: "支付联调测试（0.01 元）",
+    amountFen: 1,
+    featureKey: "silvercare.test",
+    durationDays: 1,
+    description: "支付链路联调用，请勿当作正式商品",
+    active: true,
+  },
   "team-monthly": {
     id: "team-monthly",
     name: "衍策银龄 AI · 小团队版（1个月）",
