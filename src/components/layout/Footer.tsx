@@ -6,6 +6,7 @@ const productLinks = [
   { href: "/family", label: "家属看板" },
   { href: "/care-center", label: "机构看板" },
   { href: "/alerts", label: "提醒中心" },
+  { href: "/account", label: "个人中心" },
 ];
 
 const resourceLinks = [

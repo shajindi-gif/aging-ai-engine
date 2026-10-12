@@ -38,6 +38,12 @@ COPY --from=builder --chown=node:node /app/node_modules/@prisma ./node_modules/@
 # Prisma 引擎需要系统 libssl（node:slim 不含）
 RUN apt-get update -y && apt-get install -y --no-install-recommends openssl
 
+# 版本追溯：构建时注入 Git Commit（回滚对照用）
+ARG GIT_COMMIT=unknown
+LABEL org.opencontainers.image.revision=${GIT_COMMIT}
+LABEL org.opencontainers.image.title="yanglaoai-app"
+LABEL org.opencontainers.image.vendor="上海衍策引擎人工智能科技有限公司"
+
 USER node
 EXPOSE 3000
 CMD ["node", "server.js"]

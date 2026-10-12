@@ -1,5 +1,19 @@
 # 衍策银龄 AI — 部署指南
 
+> **当前生产环境：腾讯云自有服务器 124.221.229.12**（Docker，详见下方章节与 OPERATIONS.md）
+> Vercel 部署保留为回滚备用。
+
+## 腾讯云自有服务器（当前生产）
+
+- 服务器：124.221.229.12（Ubuntu，与 fengyuxueye.com.cn 同机共享 legal-nginx 边缘）
+- 应用：`yanglaoai-app` 容器（Next.js 16 standalone，1.5G/1CPU，healthcheck 已配）
+- 数据库：Neon PostgreSQL（连接串在服务器 `/opt/yanglaoai/.env.production`，600 权限）
+- 代码目录：`/opt/yanglaoai`（rsync 部署，镜像 label 带 Git Commit）
+- 边缘配置：`/opt/legal-review/deploy/nginx/conf.d/yanglaoai999.com.conf`
+- **完整部署/回滚/运维命令见 [OPERATIONS.md](OPERATIONS.md) 与 [ROLLBACK.md](ROLLBACK.md)**
+- 域名切换与 HTTPS 步骤见 [DNS_SSL_GUIDE.md](DNS_SSL_GUIDE.md)
+
+---
 本文档详细说明衍策银龄 AI 平台的完整部署流程，涵盖本地开发、Vercel 生产部署、独立子项目发布和 Chrome 扩展上架。
 
 ---

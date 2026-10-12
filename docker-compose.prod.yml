@@ -1,16 +1,38 @@
 # 自有服务器生产部署（与 fengyuxueye 同机，加入其网络供边缘 nginx 直连）
+# 版本记录：镜像 label 中写入 GIT_COMMIT，便于回滚追溯
 services:
   app:
     build:
       context: .
       args:
         NEXT_PUBLIC_SITE_URL: https://yanglaoai999.com
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
     image: yanglaoai-app
     container_name: yanglaoai-app
     restart: unless-stopped
     env_file: .env.production
     expose:
       - "3000"
+    # 资源限制（15G 整机多站点共存，单容器限 1.5G / 1 核）
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+          cpus: "1.0"
+    mem_limit: 1536m
+    # 健康检查：应用内 /api/health
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    # 日志轮转：单文件 10M × 3 份
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - fengyuxueye_app-network
 
