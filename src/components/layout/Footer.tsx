@@ -115,7 +115,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="text-xs text-text-muted hover:text-brand-600"
             >
-              ICP 备案信息查询（beian.miit.gov.cn）
+              沪ICP备2026045851号-5
             </a>
           </div>
 
