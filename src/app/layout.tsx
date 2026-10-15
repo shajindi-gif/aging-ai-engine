@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "https://yanglaoai999.com"
   ),
-  title: "衍策银龄 AI — AI驱动的养老服务基础设施",
+  title: "衍策银龄 — 养老政策查询与照护管理服务",
   description:
-    "为老人家庭、陪诊团队、护理机构和社区服务站提供智能工作助手。涵盖养老政策数据库、补贴匹配、陪诊CRM、健康档案管理、养老机构销售线索等核心功能。",
+    "帮家庭查清父母能享受的养老补贴与政策，帮陪诊护理机构管好档案、订单和家属沟通。衍策银龄，让养老照护更有条理。",
   keywords: [
     "养老服务",
     "AI",
@@ -38,15 +38,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "zh_CN",
-    siteName: "衍策银龄 AI",
-    title: "衍策银龄 AI — AI驱动的养老服务基础设施",
+    siteName: "衍策银龄",
+    title: "衍策银龄 — 养老政策查询与照护管理服务",
     description:
-      "面向银发经济的 AI 原生 SaaS：养老政策数据库、补贴匹配、陪诊护理 CRM、机构销售线索与 Agent 工作台。",
+      "帮家庭查清父母能享受的养老补贴与政策，帮陪诊护理机构管好档案、订单和家属沟通。",
   },
   twitter: {
     card: "summary",
-    title: "衍策银龄 AI — AI驱动的养老服务基础设施",
-    description: "面向银发经济的 AI 原生 SaaS 平台。",
+    title: "衍策银龄 — 养老政策查询与照护管理服务",
+    description: "养老政策查询、陪诊护理管理、家属报告——让养老照护更有条理。",
   },
   robots: {
     index: true,

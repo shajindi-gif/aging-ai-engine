@@ -13,7 +13,7 @@ export default function CTASection({
 }: CTASectionProps) {
   const isBrand = variant === "brand";
   return (
-    <section className={`py-14 ${isBrand ? "bg-gradient-to-r from-[var(--color-brand-600)] to-[var(--color-brand-500)] text-white" : "bg-[var(--color-silver-50)]"}`}>
+    <section className={`py-14 ${isBrand ? "bg-brand-700 text-white" : "bg-[var(--color-silver-50)]"}`}>
       <div className="mx-auto max-w-4xl px-4 text-center">
         <h2 className={`text-2xl font-semibold ${isBrand ? "text-white" : ""}`}>{title}</h2>
         <p className={`mt-2 text-sm ${isBrand ? "text-[var(--color-brand-100)]" : "text-[var(--color-text-secondary)]"}`}>{subtitle}</p>

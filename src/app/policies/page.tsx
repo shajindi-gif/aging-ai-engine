@@ -94,11 +94,15 @@ export default function PoliciesPage() {
             <div>
               <span className="yc-badge yc-badge-brand">政策数据库</span>
               <h1 className="mt-3 text-2xl font-bold text-text-primary sm:text-3xl lg:text-4xl">
-                银发经济政策数据库
+                养老政策数据库
               </h1>
               <p className="mt-2 text-text-secondary">
-                全国养老政策法规智能检索与匹配
+                查询各地养老补贴、长护险与照护服务政策
               </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-text-muted">以下为样本库统计，政策持续整理扩充中</p>
+              <p className="mt-1 text-xs text-text-muted">最近核验：2026-09-27</p>
             </div>
             <div className="flex gap-4 text-sm">
               <div className="yc-card !py-2 !px-4 text-center">
@@ -177,7 +181,7 @@ export default function PoliciesPage() {
                         {policy.level === "national" ? "国家级" : policy.level === "provincial" ? "省级" : policy.level === "municipal" ? "市级" : "区级"}
                       </span>
                       <span className={cn("yc-badge text-xs", categoryColors[policy.category ?? "other"] ?? "bg-silver-100")}>
-                        {categoryLabels[policy.category ?? "other"] ?? policy.category ?? "其他"}
+                        {categoryLabels[(policy.category ?? "other").toLowerCase()] ?? (policy.category ?? "其他").toLowerCase()}
                       </span>
                       <span className="yc-badge text-xs flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
@@ -197,15 +201,25 @@ export default function PoliciesPage() {
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                       <span className="flex items-center gap-1 text-xs text-text-muted">
-                        <Calendar className="h-3 w-3" />
-                        {policy.effectiveDate ?? (policy.publishDate ? new Date(policy.publishDate).toLocaleDateString("zh-CN") : "")}
+                        <Calendar className="h-3 w-3" aria-hidden="true" />
+                        {policy.effectiveDate ? new Date(policy.effectiveDate).toLocaleDateString("zh-CN") : "生效日期待核实"}
+                        {policy.status && policy.status !== "ACTIVE" && (
+                          <span className="ml-1 rounded bg-silver-100 px-1.5 py-0.5 text-[10px] text-text-muted">已到期</span>
+                        )}
                       </span>
-                      <button
-                        onClick={() => setSelectedPolicy(policy.id)}
-                        className="text-xs font-medium text-brand-600 hover:text-brand-700"
-                      >
-                        查看详情
-                      </button>
+                      <span className="flex items-center gap-3">
+                        {policy.sourceUrl && (
+                          <a href={policy.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs text-text-muted underline-offset-2 hover:text-brand-600 hover:underline" title="查看官方原文">
+                            原文
+                          </a>
+                        )}
+                        <button
+                          onClick={() => setSelectedPolicy(policy.id)}
+                          className="text-xs font-medium text-brand-600 hover:text-brand-700"
+                        >
+                          查看详情
+                        </button>
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -241,7 +255,7 @@ export default function PoliciesPage() {
                   {detail.level === "national" ? "国家级" : detail.level === "provincial" ? "省级" : detail.level === "municipal" ? "市级" : "区级"}
                 </span>
                 <span className={cn("yc-badge text-xs", categoryColors[detail.category ?? "other"] ?? "bg-silver-100")}>
-                  {categoryLabels[detail.category ?? "other"] ?? detail.category ?? "其他"}
+                  {categoryLabels[(detail.category ?? "other").toLowerCase()] ?? (detail.category ?? "其他").toLowerCase()}
                 </span>
               </div>
               <button onClick={() => setSelectedPolicy(null)} className="rounded-lg p-1 hover:bg-silver-100">
@@ -250,6 +264,14 @@ export default function PoliciesPage() {
             </div>
             <h2 className="text-lg font-bold text-text-primary">{detail.title}</h2>
             <p className="mt-2 text-sm text-text-secondary">{detail.summary}</p>
+
+            {/* 来源与核验信息 */}
+            <div className="mt-4 rounded-lg bg-silver-50 px-4 py-3 text-xs leading-relaxed text-text-secondary">
+              <p>发布部门：{detail.department ?? "待核实"}</p>
+              <p className="mt-1">生效日期：{detail.effectiveDate ? new Date(detail.effectiveDate).toLocaleDateString("zh-CN") : "待核实"}{detail.expiryDate ? ` · 有效期至 ${new Date(detail.expiryDate).toLocaleDateString("zh-CN")}` : ""}</p>
+              <p className="mt-1">最近核验：2026-09-27（样本库）{detail.sourceUrl ? " · " : ""}{detail.sourceUrl && (<a href={detail.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-brand-600 hover:underline"><ExternalLink className="h-3 w-3" aria-hidden="true" />查看官方原文</a>)}</p>
+              <p className="mt-1.5 text-text-muted">注意：以上为整理信息，可能滞后于政策变化；申请前请以官方原文和主管部门答复为准。</p>
+            </div>
 
             <div className="mt-6 space-y-4">
               <div>

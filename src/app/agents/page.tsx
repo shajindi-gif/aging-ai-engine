@@ -65,8 +65,8 @@ export default function AgentsPage() {
 
       <section className="bg-surface-secondary py-10 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <span className="yc-badge yc-badge-brand">AI Agent</span>
-          <h1 className="mt-3 text-2xl font-bold text-text-primary sm:text-3xl lg:text-4xl">AI Agent 工作台</h1>
+          <span className="yc-badge yc-badge-brand">照护助手</span>
+          <h1 className="mt-3 text-2xl font-bold text-text-primary sm:text-3xl lg:text-4xl">照护助手工作台</h1>
           <p className="mt-2 text-text-secondary">内置多种行业专属 Agent，自动执行复杂任务</p>
         </div>
       </section>

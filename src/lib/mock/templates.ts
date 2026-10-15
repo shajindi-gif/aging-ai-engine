@@ -85,5 +85,5 @@ export const mockTemplates: Template[] = [
   { id: "tpl-34", slug: "sales-proposal-outline", name: "销售方案大纲", description: "为客户定制的解决方案提案框架", category: "sales", targetAudience: "销售团队", useCase: "正式提案准备",
     inputFields: ["客户名称","需求摘要","产品方案","价格","实施周期"], outputSample: "方案大纲：1.客户现状分析 2.解决方案概述 3.产品模块 4.实施计划(3个月) 5.投资回报 6.服务保障。总价：XX万/年。" },
   { id: "tpl-35", slug: "sales-exhibition-pitch", name: "展会推介话术", description: "养老行业展会快速推介话术", category: "sales", targetAudience: "销售团队、市场团队", useCase: "养老产业展会/论坛",
-    inputFields: ["产品名称","展会名称","目标客户","核心卖点"], outputSample: "展会展板：衍策银龄AI — 中国银发经济AI原生服务基础设施。核心功能：政策匹配+护理CRM+机构线索库。扫码体验Demo。" },
+    inputFields: ["产品名称","展会名称","目标客户","核心卖点"], outputSample: "展会展板：衍策银龄 — 养老政策查询与照护管理系统。政策库、护理CRM、机构数据库。现场扫码体验。" },
 ];

@@ -11,7 +11,7 @@ const productOptions = [
   "银发经济政策数据库",
   "陪诊护理服务 CRM",
   "养老机构销售线索库",
-  "Agent 工作台",
+  "照护助手",
   "MCP Server / SDK",
   "定制化开发",
 ];

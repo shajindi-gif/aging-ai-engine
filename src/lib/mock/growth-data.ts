@@ -35,7 +35,7 @@ export const mockTrustItems: TrustItem[] = [
   { id: "trust-9", title: "审计日志", description: "记录所有数据访问和操作日志，支持追溯查询谁在什么时候访问了哪些数据。", category: "security" },
   { id: "trust-10", title: "数据导出和删除", description: "用户可随时导出全部数据（JSON/PDF格式）。账户注销后，个人数据在30天内完全删除。", category: "security" },
   { id: "trust-11", title: "政策匹配免责声明", description: "政策匹配结果仅供参考，具体资格、材料和办理结果以当地主管部门、街道社区或经办机构最终审核为准。", category: "compliance" },
-  { id: "trust-12", title: "AI置信度透明", description: "所有AI Agent输出均附带置信度评分和推理依据，低于阈值的结果自动标记为需人工复核。", category: "compliance" },
+  { id: "trust-12", title: "分析结果可复核", description: "健康相关的分析结果默认标注「需人工复核」，仅作为照护参考，不替代医生判断。", category: "compliance" },
 ];
 
 export interface SEOPage {

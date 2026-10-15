@@ -72,7 +72,7 @@ export default function TrustPage() {
               {[
                 { title: "SSO 单点登录", desc: "支持企业级 SAML/OIDC 集成" },
                 { title: "私有化部署", desc: "支持本地部署和数据隔离" },
-                { title: "SLA 保障", desc: "99.9% 可用性承诺" },
+                { title: "服务等级", desc: "以合同约定为准（标准 SLA 制定中）" },
               ].map((f) => (
                 <div key={f.title} className="rounded-xl border-2 border-dashed border-[var(--color-border)] bg-[var(--color-silver-50)] p-5 text-center">
                   <h3 className="text-sm font-semibold">{f.title}</h3>

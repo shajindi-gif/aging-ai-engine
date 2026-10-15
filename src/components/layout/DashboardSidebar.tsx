@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   { label: "陪诊护理 CRM", href: "/dashboard/care-crm", icon: ClipboardList },
   { label: "健康档案", href: "/dashboard/health-records", icon: HeartPulse },
   { label: "销售线索", href: "/dashboard/sales-leads", icon: Building2 },
-  { label: "AI Agent 工作台", href: "/dashboard/agent-workbench", icon: Bot },
+  { label: "照护助手", href: "/dashboard/agent-workbench", icon: Bot },
 ];
 
 interface DashboardSidebarProps {

@@ -218,7 +218,7 @@ export default function ProductsPage() {
             开始使用衍策银龄 AI
           </h2>
           <p className="mt-3 text-brand-100">
-            选择适合您业务的产品，立即体验 AI 驱动的养老服务基础设施
+            选择适合您业务的产品，先用起来，再决定
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link

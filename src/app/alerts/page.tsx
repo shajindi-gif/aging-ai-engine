@@ -77,7 +77,7 @@ export default function AlertsPage() {
                       </div>
                       <p className="mt-2 text-sm leading-relaxed text-text-secondary">{a.message}</p>
                       <p className="mt-2 text-xs text-text-muted">
-                        {new Date(a.createdAt).toLocaleString("zh-CN")} · 来源：{a.source === "agent" ? "AI Agent" : a.source === "trend-engine" ? "趋势引擎" : a.source}
+                        {new Date(a.createdAt).toLocaleString("zh-CN")} · 来源：{a.source === "agent" ? "照护助手" : a.source === "trend-engine" ? "趋势引擎" : a.source}
                         {" · "}<Link href={`/family/elder/${a.elderlyId}`} className="text-brand-700 hover:underline">查看老人</Link>
                       </p>
                     </div>

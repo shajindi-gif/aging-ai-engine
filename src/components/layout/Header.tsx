@@ -7,12 +7,11 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const navLinks = [
-  { href: "/policies", label: "政策库" },
-  { href: "/care-crm", label: "陪诊 CRM" },
-  { href: "/institutions", label: "机构线索" },
-  { href: "/tools", label: "AI 工具" },
-  { href: "/solutions", label: "解决方案" },
-  { href: "/pricing", label: "定价" },
+  { href: "/solutions/elder-family", label: "给老人家庭" },
+  { href: "/care-crm", label: "给养老机构" },
+  { href: "/policies", label: "养老政策" },
+  { href: "/tools", label: "产品工具" },
+  { href: "/pricing", label: "价格" },
 ];
 
 export default function Header() {
@@ -60,8 +59,8 @@ export default function Header() {
           <Link href="/login" className="yc-btn-ghost">
             登录
           </Link>
-          <Link href="/register" className="yc-btn-primary">
-            免费试用
+          <Link href="/tools/subsidy-checker" className="yc-btn-primary">
+            查询养老补贴
           </Link>
         </div>
 

@@ -40,7 +40,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm leading-relaxed text-text-secondary">
-              AI 驱动的养老服务基础设施，为老人家庭、陪诊团队和护理机构提供智能工作助手。
+              帮家庭查清养老政策，帮机构管好照护业务——让养老照护更有条理。
             </p>
           </div>
 

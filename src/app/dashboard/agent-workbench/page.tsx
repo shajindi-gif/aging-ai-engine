@@ -352,9 +352,9 @@ export default function AgentWorkbenchPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">AI Agent 工作台</h1>
+        <h1 className="text-2xl font-bold text-text-primary">照护助手工作台</h1>
         <p className="text-sm text-text-muted mt-1">
-          选择 AI Agent 执行智能任务，所有输出均需经过人工审核
+          选择助手任务，结果均需人工审核后使用
         </p>
       </div>
 

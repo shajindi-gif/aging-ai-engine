@@ -51,7 +51,7 @@ export default function LoginPage() {
           </h1>
         </Link>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          面向中国银发经济的 AI 养老服务基础设施
+          养老政策查询与照护管理服务，让家人更安心
         </p>
       </div>
 
