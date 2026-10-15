@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const navLinks = [
@@ -16,7 +16,15 @@ const navLinks = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((s) => setSignedIn(!!(s && s.user)))
+      .catch(() => {});
+  }, []);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
@@ -56,9 +64,15 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <Link href="/login" className="yc-btn-ghost">
-            登录
-          </Link>
+          {signedIn ? (
+            <Link href="/account/settings" className="yc-btn-ghost">
+              <UserRound className="h-4 w-4" aria-hidden="true" /> 账户设置
+            </Link>
+          ) : (
+            <Link href="/login" className="yc-btn-ghost">
+              登录
+            </Link>
+          )}
           <Link href="/tools/subsidy-checker" className="yc-btn-primary">
             查询养老补贴
           </Link>

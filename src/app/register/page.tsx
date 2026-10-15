@@ -1,302 +1,109 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { Mail, Lock, User, Phone, AlertCircle } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Loader2, CheckCircle2 } from "lucide-react";
+import { PWD_MIN_HINT } from "@/lib/authz/pwd-hint";
 
 export default function RegisterPage() {
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const router = useRouter();
+  const [form, setForm] = useState({ email: "", password: "", name: "" });
+  const [agree, setAgree] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
 
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-  })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const inputCls = "w-full min-h-12 rounded-lg border border-border bg-white px-4 text-base outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-100";
 
-  function updateField(field: string, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }))
-  }
-
-  function validate(): string | null {
-    if (!form.name.trim()) return '请输入姓名'
-    if (!form.email.trim()) return '请输入邮箱'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return '请输入有效的邮箱地址'
-    if (form.password.length < 6) return '密码至少需要6位'
-    if (form.password !== form.confirmPassword) return '两次输入的密码不一致'
-    if (form.phone && !/^1[3-9]\d{9}$/.test(form.phone)) return '请输入有效的手机号'
-    return null
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
-
-    const validationError = validate()
-    if (validationError) {
-      setError(validationError)
-      return
-    }
-
-    setLoading(true)
-
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!agree) { setError("请先阅读并同意服务条款与隐私政策"); return; }
+    setBusy(true);
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-          phone: form.phone || undefined,
-        }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || '注册失败，请稍后重试')
-        return
-      }
-
-      // Auto sign-in after successful registration
-      const result = await signIn('credentials', {
-        email: form.email,
-        password: form.password,
-        redirect: false,
-        callbackUrl,
-      })
-
-      if (result?.error) {
-        // Registration succeeded but auto-login failed — redirect to login
-        window.location.href = '/login'
-      } else if (result?.url) {
-        window.location.href = result.url
-      } else {
-        window.location.href = '/dashboard'
-      }
-    } catch {
-      setError('网络错误，请检查连接后重试')
-    } finally {
-      setLoading(false)
-    }
+      const res = await fetch("/api/auth/register", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok || !d.success) { setError(d.error || "注册失败，请稍后重试"); return; }
+      setDone(true);
+      fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "signup_success" }) }).catch(() => {});
+      // 注册成功后自动登录并进入引导
+      const r = await signIn("password", { identifier: form.email, password: form.password, redirect: false });
+      if (!r?.error) setTimeout(() => router.push("/onboarding"), 600);
+      else setTimeout(() => router.push("/login"), 900);
+    } catch { setError("网络异常，请重试"); }
+    finally { setBusy(false); }
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[var(--color-brand-50)] via-white to-[var(--color-gold-50)] px-4 py-12 sm:px-6 lg:px-8">
-      {/* Brand */}
-      <div className="mb-8 text-center">
-        <Link href="/" className="inline-block">
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)] sm:text-3xl">
-            衍策银龄 <span className="yc-text-gradient">AI</span>
-          </h1>
+    <div className="flex min-h-screen flex-col bg-surface-secondary">
+      <header className="px-6 py-5">
+        <Link href="/" className="inline-flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-base font-bold text-white">龄</span>
+          <span className="text-lg font-semibold text-text-primary">衍策银龄</span>
         </Link>
-        <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          创建账号，开启智慧养老服务
-        </p>
-      </div>
+      </header>
 
-      {/* Card */}
-      <div className="w-full max-w-md">
-        <div className="yc-card !p-8 shadow-lg shadow-[var(--color-brand-100)]/20">
-          <h2 className="text-center text-xl font-semibold text-[var(--color-text-primary)]">
-            注册
-          </h2>
-          <p className="mt-1 text-center text-sm text-[var(--color-text-muted)]">
-            填写信息创建您的账号
-          </p>
+      <main className="flex flex-1 items-center justify-center px-4 pb-16">
+        <div className="w-full max-w-sm">
+          <div className="rounded-2xl border border-border bg-white p-8 shadow-sm">
+            <h1 className="text-2xl font-bold tracking-tight text-text-primary">创建账户</h1>
+            <p className="mt-1.5 text-sm text-text-secondary">只需邮箱，30 秒完成。姓名等信息可稍后补充。</p>
 
-          {/* Error */}
-          {error && (
-            <div className="mt-5 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-            {/* Name */}
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-1.5 block text-sm font-medium text-[var(--color-text-secondary)]"
-              >
-                姓名
-              </label>
-              <div className="relative">
-                <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]" />
-                <input
-                  id="name"
-                  type="text"
-                  required
-                  autoComplete="name"
-                  value={form.name}
-                  onChange={(e) => updateField('name', e.target.value)}
-                  placeholder="请输入您的姓名"
-                  className="w-full rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-text-primary)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-brand-400)] focus:ring-2 focus:ring-[var(--color-brand-100)]"
-                />
+            {done ? (
+              <div className="mt-8 text-center">
+                <CheckCircle2 className="mx-auto h-12 w-12 text-success" aria-hidden="true" />
+                <p className="mt-3 text-lg font-semibold text-text-primary">注册成功</p>
+                <p className="mt-1 text-sm text-text-secondary">正在进入…验证邮件已发送，可在账户设置中完成验证</p>
               </div>
-            </div>
+            ) : (
+              <form onSubmit={submit} className="mt-6 space-y-4">
+                <div>
+                  <label htmlFor="reg-email" className="mb-1.5 block text-sm font-medium text-text-primary">邮箱 *</label>
+                  <input id="reg-email" type="email" autoComplete="email" required value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="用于登录和接收通知" className={inputCls} />
+                </div>
+                <div>
+                  <label htmlFor="reg-pwd" className="mb-1.5 block text-sm font-medium text-text-primary">密码 *</label>
+                  <input id="reg-pwd" type="password" autoComplete="new-password" required value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    aria-describedby="reg-pwd-hint" placeholder="设置登录密码" className={inputCls} />
+                  <p id="reg-pwd-hint" className="mt-1.5 text-xs text-text-muted">{PWD_MIN_HINT}；建议使用密码管理器生成</p>
+                </div>
+                <div>
+                  <label htmlFor="reg-name" className="mb-1.5 block text-sm font-medium text-text-primary">昵称 <span className="font-normal text-text-muted">（选填）</span></label>
+                  <input id="reg-name" autoComplete="nickname" value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="怎么称呼您" className={inputCls} />
+                </div>
 
-            {/* Email */}
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-[var(--color-text-secondary)]"
-              >
-                邮箱
-              </label>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]" />
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  value={form.email}
-                  onChange={(e) => updateField('email', e.target.value)}
-                  placeholder="your@email.com"
-                  className="w-full rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-text-primary)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-brand-400)] focus:ring-2 focus:ring-[var(--color-brand-100)]"
-                />
-              </div>
-            </div>
+                <label className="flex items-start gap-2.5 text-sm text-text-secondary">
+                  <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)}
+                    className="mt-1 h-5 w-5 shrink-0 rounded border-border accent-[#1d6f67]" />
+                  <span>我已阅读并同意 <Link href="/terms" className="text-brand-700 hover:underline">服务条款</Link> 与 <Link href="/privacy" className="text-brand-700 hover:underline">隐私政策</Link></span>
+                </label>
 
-            {/* Password */}
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-1.5 block text-sm font-medium text-[var(--color-text-secondary)]"
-              >
-                密码
-              </label>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]" />
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  autoComplete="new-password"
-                  value={form.password}
-                  onChange={(e) => updateField('password', e.target.value)}
-                  placeholder="至少6位密码"
-                  className="w-full rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-text-primary)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-brand-400)] focus:ring-2 focus:ring-[var(--color-brand-100)]"
-                />
-              </div>
-            </div>
+                {error && <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-[#9c3a31]">{error}</p>}
 
-            {/* Confirm Password */}
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="mb-1.5 block text-sm font-medium text-[var(--color-text-secondary)]"
-              >
-                确认密码
-              </label>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]" />
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  required
-                  autoComplete="new-password"
-                  value={form.confirmPassword}
-                  onChange={(e) => updateField('confirmPassword', e.target.value)}
-                  placeholder="再次输入密码"
-                  className="w-full rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-text-primary)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-brand-400)] focus:ring-2 focus:ring-[var(--color-brand-100)]"
-                />
-              </div>
-            </div>
+                <button type="submit" disabled={busy}
+                  className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-brand-600 text-base font-medium text-white transition hover:bg-brand-700 disabled:opacity-60">
+                  {busy && <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />}
+                  {busy ? "创建中…" : "注册并登录"}
+                </button>
+              </form>
+            )}
 
-            {/* Phone (optional) */}
-            <div>
-              <label
-                htmlFor="phone"
-                className="mb-1.5 block text-sm font-medium text-[var(--color-text-secondary)]"
-              >
-                手机号{' '}
-                <span className="font-normal text-[var(--color-text-muted)]">
-                  (选填)
-                </span>
-              </label>
-              <div className="relative">
-                <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]" />
-                <input
-                  id="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  value={form.phone}
-                  onChange={(e) => updateField('phone', e.target.value)}
-                  placeholder="13800138000"
-                  className="w-full rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-text-primary)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-brand-400)] focus:ring-2 focus:ring-[var(--color-brand-100)]"
-                />
-              </div>
-            </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="yc-btn-primary mt-2 w-full py-3 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loading ? (
-                <span className="inline-flex items-center gap-2">
-                  <svg
-                    className="h-4 w-4 animate-spin"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  注册中...
-                </span>
-              ) : (
-                '注册'
-              )}
-            </button>
-          </form>
-
-          {/* Login link */}
-          <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
-            已有账号？{' '}
-            <Link
-              href="/login"
-              className="font-medium text-[var(--color-brand-600)] transition hover:text-[var(--color-brand-700)] hover:underline"
-            >
-              登录
-            </Link>
-          </p>
+            {!done && (
+              <p className="mt-6 text-center text-sm text-text-secondary">
+                已有账户？<Link href="/login" className="font-medium text-brand-700 hover:underline">直接登录</Link>
+              </p>
+            )}
+          </div>
         </div>
-
-        {/* Footer nav */}
-        <div className="mt-6 flex items-center justify-center gap-4 text-xs text-[var(--color-text-muted)]">
-          <Link href="/" className="transition hover:text-[var(--color-brand-600)]">
-            首页
-          </Link>
-          <span className="text-[var(--color-border)]">·</span>
-          <Link href="/pricing" className="transition hover:text-[var(--color-brand-600)]">
-            定价
-          </Link>
-        </div>
-      </div>
+      </main>
     </div>
-  )
+  );
 }

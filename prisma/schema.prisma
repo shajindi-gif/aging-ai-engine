@@ -64,6 +64,12 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  identities      UserIdentity[]
+  authVersion     Int       @default(0)
+  nickname        String?
+  avatarUrl       String?
+  lastLoginAt     DateTime?
+
   elderlyProfiles ElderlyProfile[]
   cases           Case[]
   orders          Order[]
@@ -1190,5 +1196,56 @@ model CareAgentRun {
   elderly      ElderlyProfile @relation(fields: [elderlyId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   @@index([elderlyId])
+  @@index([createdAt])
+}
+
+// ═══════════════════════════════════════════
+// AUTH UPGRADE — 统一身份 / 验证码 / 审计
+// ═══════════════════════════════════════════
+
+// 统一身份凭证：邮箱与手机号都是同一 User ID 的凭证，不是主键
+model UserIdentity {
+  id          String    @id @default(cuid())
+  userId      String
+  type        String    // email | phone
+  identifier  String    @unique // 规范化：邮箱小写 / 手机号 E.164
+  verifiedAt  DateTime?
+  isPrimary   Boolean   @default(false)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  @@index([userId])
+  @@index([type])
+}
+
+// 一次性验证码（服务端存储哈希；单次使用；有效期；尝试上限）
+model AuthVerificationCode {
+  id             String    @id @default(cuid())
+  channel        String    // email | sms
+  purpose        String    // login | email_verify | phone_verify | password_reset
+  identifierHash String    // HMAC(AUTH_CODE_SECRET, 规范化identifier)，不存明文
+  codeHash       String    // sha256(code + identifierHash)，不存明文验证码
+  attempts       Int       @default(0)
+  maxAttempts    Int       @default(5)
+  expiresAt      DateTime
+  consumedAt     DateTime?
+  ipHash         String?
+  createdAt      DateTime  @default(now())
+  @@index([identifierHash, purpose])
+  @@index([expiresAt])
+}
+
+// 认证审计日志（IP/UA 哈希存储；meta 禁止含验证码/密码/Token）
+model AuthAuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  event     String   // register|login_success|login_failed|code_sent|code_verified|code_failed|password_reset|identity_bound|logout_all|profile_updated|auth_event
+  ipHash    String?
+  uaHash    String?
+  success   Boolean  @default(true)
+  meta      Json?
+  createdAt DateTime @default(now())
+  @@index([userId])
+  @@index([event])
   @@index([createdAt])
 }

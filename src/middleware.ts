@@ -4,6 +4,7 @@ import { getToken } from 'next-auth/jwt'
 const publicPaths = [
   '/', '/login', '/register', '/pricing', '/products', '/contact',
   '/compliance', '/trust', '/privacy', '/terms', '/demo', '/docs', '/developers',
+  '/login/forgot', '/verify-email',
   '/tools', '/templates', '/solutions', '/resources', '/city',
   '/policies', '/institutions', '/care-crm', '/care-orders',
   '/care-records', '/policy-match', '/elders', '/agents',
