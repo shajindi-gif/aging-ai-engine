@@ -1249,3 +1249,30 @@ model AuthAuditLog {
   @@index([event])
   @@index([createdAt])
 }
+
+// ═══════════════════════════════════════════
+// 发票申请（人工开具流程）
+// ═══════════════════════════════════════════
+
+model InvoiceRequest {
+  id           String   @id @default(cuid())
+  invoiceNo    String   @unique          // 我方申请单号
+  userId       String
+  orderId      String
+  orderNo      String                     // 冗余便于展示
+  amountFen    Int                        // 服务端从订单取，防篡改
+  titleType    String                     // personal | company
+  title        String                     // 发票抬头
+  taxNo        String?                    // 公司税号
+  email        String                     // 接收电子发票邮箱
+  remark       String?
+  status       String   @default("PENDING") // PENDING | ISSUED | REJECTED
+  invoiceCode  String?                    // 税务发票号码（人工开具后回填）
+  issuedAt     DateTime?
+  rejectReason String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@index([userId])
+  @@index([orderId])
+  @@index([status])
+}

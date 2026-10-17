@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useEffect, useState } from "react";
 import Header from "@/components/layout/Header";
@@ -114,6 +115,14 @@ export default function AdminOpsPage() {
                     </tbody>
                   </table>
                 </div>
+              </section>
+
+              <section className="yc-card flex items-center justify-between">
+                <div>
+                  <h2 className="text-base font-bold text-text-primary">发票申请管理</h2>
+                  <p className="mt-1 text-sm text-text-secondary">查看用户开票申请，人工开具后回填发票号。</p>
+                </div>
+                <Link href="/admin/invoices" className="yc-btn-primary shrink-0">进入发票管理</Link>
               </section>
 
               <div className="flex items-start gap-3 rounded-xl border border-gold-200 bg-gold-50 px-4 py-3">

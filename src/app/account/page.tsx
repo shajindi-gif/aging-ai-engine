@@ -126,7 +126,7 @@ export default function AccountPage() {
                 <h2 className="flex items-center gap-2 text-base font-bold text-text-primary"><UserCircle2 className="h-5 w-5 text-brand-600" aria-hidden="true" /> 账户信息</h2>
                 <div className="mt-4 space-y-2 text-sm text-text-secondary">
                   <p>数据权利：账户与个人信息处理规则见<Link href="/privacy" className="text-brand-700 hover:underline">《隐私政策》</Link>；注销与数据删除可通过<Link href="/contact" className="text-brand-700 hover:underline">联系表单</Link>申请（人工核实后处理）。</p>
-                  <p>支付与发票规则见<Link href="/terms" className="text-brand-700 hover:underline">《服务条款》</Link>。</p>
+                  <p>支付与发票规则见<Link href="/terms" className="text-brand-700 hover:underline">《服务条款》</Link>。已支付订单可在<Link href="/account/invoices" className="text-brand-700 hover:underline">发票管理</Link>申请电子发票。</p>
                 </div>
               </section>
 
