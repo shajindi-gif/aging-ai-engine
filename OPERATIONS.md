@@ -64,6 +64,12 @@ curl -s -H "Host: yanglaoai999.com" http://124.221.229.12/api/health | head -c 8
 - 备份：Neon 控制台时间线（PITR）；重大变更前导出关键表
 - Schema 变更：本地改 prisma/schema.prisma → `npx prisma db push`（只用增量操作）→ 随镜像部署
 
+## env_file 引号坑（重要）
+
+docker compose 的 `env_file` **不会剥离值两侧的双引号**（会把引号当作值的一部分传给程序）。
+所有值一律裸写不加引号；含空格/换行的值（如 PEM 私钥）用 `\n` 转义单行写入，代码侧 replace 还原。
+2026-10-17 事故复盘：SMTP_PASS 带引号 → 535 no salt aes decrypt fail，排查耗时 1 小时。
+
 ## 支付运维
 
 - 对账：`/admin/ops` 后台看订单+回调日志；商户后台核对流水
