@@ -36,7 +36,16 @@ export async function middleware(req: NextRequest) {
   }
 
   // Check auth for protected page routes (dashboard, etc.)
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  // 生产经 nginx 反代，req.url 协议为 http，但会话 Cookie 实为 __Secure- 前缀；
+  // 需按 X-Forwarded-Proto 显式指定 cookieName，否则 getToken 读不到会话。
+  const proto = req.headers.get('x-forwarded-proto') || req.nextUrl.protocol.replace(':', '')
+  const secure = proto === 'https'
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+    cookieName: secure ? '__Secure-authjs.session-token' : 'authjs.session-token',
+    secureCookie: secure,
+  })
 
   if (!token) {
     const loginUrl = new URL('/login', req.url)
