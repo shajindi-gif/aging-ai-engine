@@ -27,6 +27,30 @@ const PURPOSE_TEXT: Record<string, string> = {
 };
 
 // ── 邮件 ────────────────────────────────────────
+// 优先级：SMTP（腾讯云 Sendify 等）> Resend API > 开发 outbox
+// SMTP 环境变量：SMTP_HOST(默认 smtp.qcloudmail.com) SMTP_PORT(465) SMTP_USER SMTP_PASS [MAIL_FROM]
+
+function smtpConfigured(): boolean {
+  return !!(process.env.SMTP_USER?.trim() && process.env.SMTP_PASS?.trim());
+}
+
+async function sendEmailSmtp(to: string, subject: string, text: string, html: string): Promise<void> {
+  const { createTransport } = await import("nodemailer");
+  const host = process.env.SMTP_HOST?.trim() || "smtp.qcloudmail.com";
+  const port = Number(process.env.SMTP_PORT || 465);
+  const user = process.env.SMTP_USER!.trim();
+  const from = process.env.MAIL_FROM?.trim() || user;
+  const transporter = createTransport({
+    host, port, secure: port === 465,
+    auth: { user, pass: process.env.SMTP_PASS!.trim() },
+    pool: true, maxConnections: 2,
+    tls: { servername: host },
+  });
+  const info = await transporter.sendMail({ from: `${BRAND} <${from}>`, to, subject, text, html });
+  if (info.response && /5\d\d|4\d\d/.test(String(info.response))) {
+    throw new Error("smtp_rejected:" + String(info.response).slice(0, 100));
+  }
+}
 
 export async function sendEmail(opts: {
   to: string;
@@ -38,6 +62,24 @@ export async function sendEmail(opts: {
   const subject = opts.subject || `${BRAND} · ${PURPOSE_TEXT[opts.purpose] || "通知"}`;
   const body = opts.body
     || `您的验证码是：${opts.code}\n\n有效期 5 分钟，请勿泄露给他人。\n如非本人操作，请忽略本邮件。\n\n— ${BRAND}（${SITE.replace(/^https?:\/\//, "")}）`;
+
+  const html = `<div style="font-family:-apple-system,'PingFang SC',sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#2b2926">
+  <div style="font-size:15px;font-weight:700;color:#1d6f67;margin-bottom:20px">${BRAND}</div>
+  <p style="font-size:14px;line-height:1.7">${subject.replace(/ · .*/, " · ")}</p>
+  ${opts.code ? `<div style="font-size:34px;font-weight:700;letter-spacing:8px;color:#1d6f67;background:#f2f7f6;border-radius:10px;padding:16px;text-align:center;margin:20px 0">${opts.code}</div>
+  <p style="font-size:13px;color:#78716c">有效期 5 分钟，请勿泄露给他人。如非本人操作，请忽略本邮件。</p>` : `<p style="font-size:14px;line-height:1.7">${body.split("\n")[0]}</p>`}
+  <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e7e2da;font-size:12px;color:#a8a196">${BRAND} · 上海衍策引擎人工智能科技有限公司 · <a href="${SITE}" style="color:#78716c">${SITE.replace(/^https?:\/\//, "")}</a></div>
+</div>`;
+
+  if (smtpConfigured()) {
+    try {
+      await sendEmailSmtp(opts.to, subject, body, html);
+      return;
+    } catch (e: any) {
+      console.error(`[email:smtp] failed host=${process.env.SMTP_HOST || "smtp.qcloudmail.com"} to=${maskIdentifier(opts.to)} err=${String(e?.message || e).slice(0, 120)}`);
+      throw new Error("email_send_failed:" + String(e?.message || e).slice(0, 120));
+    }
+  }
 
   const key = process.env.RESEND_API_KEY?.trim();
   if (key) {
