@@ -55,7 +55,7 @@ A 历史邮箱用户登录+身份回填 ✓ ｜ B 新注册/弱密码拒绝/登�
 
 ## 6. 尚未实现（如实）
 
-1. **生产验证码渠道待凭证**：邮件需 `RESEND_API_KEY`（或同类 SMTP），短信需 `SMS_PROVIDER=aliyun|tencent` + 商户密钥。未配置时接口诚实返回 502（已验证），密码登录/注册不受影响。**这是当前唯一的功能性阻塞。**
+1. **生产验证码渠道**：邮件通道已通（腾讯云 Sendify SMTP，生产实测真实送达）；短信需 `SMS_PROVIDER=aliyun|tencent` + 商户密钥，生产未配置时诚实 502，邮箱/密码可全量替代。（2026-10-17 更新，后续整改见 REMEDIATION：发票闭环已上线 @4249f93，反代 Cookie 与 SMTP 引号两个 P0 已修并生产验收）
 2. 按设备会话列表与单设备撤销（需 DB Session 改造，P1）
 3. 图形验证码/风控渐进验证（当前用限流兜底，P2）
 4. Google/GitHub/微信 OAuth、Passkeys、TOTP MFA、企业 SSO（预留 authVersion 与身份表结构，未实现未伪装）
