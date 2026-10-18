@@ -54,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return { id: user.id, email: user.email, name: user.name, role: user.role, authVersion: user.authVersion } as any
       },
     }),
-    // ② 手机号/邮箱 + 验证码（手机号未注册即验即注册 = 低摩擦；邮箱需已有账户）
+    // ② 手机号/邮箱 + 验证码（即验即注册：验证码本身即邮箱/手机号所有权证明，未注册自动建号）
     Credentials({
       id: 'code',
       name: '验证码登录',
@@ -81,11 +81,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         let user = await findUserByIdentifier(target)
-        if (!user && phone) {
-          const created = await prisma.user.create({ data: { phone, role: 'FAMILY' } })
-          await ensureIdentity(created.id, phone, true)
-          await logAuth({ event: 'register', userId: created.id, ip, meta: { via: 'phone_code' } })
-          user = { id: created.id, email: null, phone, name: null, role: created.role, authVersion: created.authVersion }
+        if (!user) {
+          // 验证码校验通过 = 已证明邮箱/手机号所有权 → 即验即注册（邮箱与手机号同权）
+          try {
+            const created = email
+              ? await prisma.user.create({ data: { email, role: 'FAMILY' } })
+              : await prisma.user.create({ data: { phone, role: 'FAMILY' } })
+            await ensureIdentity(created.id, target, true)
+            await logAuth({ event: 'register', userId: created.id, ip, meta: { via: email ? 'email_code' : 'phone_code' } })
+            user = { id: created.id, email: created.email, phone: created.phone, name: null, role: created.role, authVersion: created.authVersion }
+          } catch (e: any) {
+            user = await findUserByIdentifier(target) // 标识被历史账户占用（如大小写/竞态）→ 回查按已有账户登录
+            if (!user) {
+              await logAuth({ event: 'login_failed', ip, success: false, meta: { via: 'code', reason: 'provision_error' } })
+              return null
+            }
+          }
         }
         if (!user) {
           await logAuth({ event: 'login_failed', ip, success: false, meta: { via: 'code', reason: 'no_account' } })

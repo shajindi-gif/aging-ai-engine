@@ -103,7 +103,7 @@ function LoginContent() {
                       {sending ? "发送中…" : countdown > 0 ? `${countdown}s` : "获取验证码"}
                     </button>
                   </div>
-                  <p className="mt-1.5 text-xs text-text-muted">验证码 5 分钟内有效；未注册的手机号验证后可直接登录</p>
+                  <p className="mt-1.5 text-xs text-text-muted">验证码 5 分钟内有效；未注册的邮箱/手机号验证后自动注册并登录</p>
                 </div>
               ) : (
                 <div>
