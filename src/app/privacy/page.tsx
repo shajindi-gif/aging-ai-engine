@@ -106,7 +106,7 @@ export default function PrivacyPolicyPage() {
           <Section title="九、如何联系我们">
             <p>如对本政策或个人信息处理有任何疑问、意见或请求，请通过以下方式联系：</p>
             <ul className="list-disc space-y-1.5 pl-5">
-              <li>邮箱：contact@yanglaoai999.com</li>
+              <li>邮箱：yanceai@163.com</li>
               <li>站点内"联系我们"表单：/contact</li>
               <li>主体：上海衍策引擎人工智能科技有限公司</li>
             </ul>

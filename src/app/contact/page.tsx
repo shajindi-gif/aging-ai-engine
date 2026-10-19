@@ -187,7 +187,7 @@ export default function ContactPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-brand-500 shrink-0" />
-                    <p className="text-sm text-text-secondary">contact@yanglaoai999.com</p>
+                    <a href="mailto:yanceai@163.com" className="text-sm text-text-secondary hover:text-brand-700 hover:underline">yanceai@163.com</a>
                   </div>
                   <div className="flex items-center gap-3">
                     <MapPin className="h-4 w-4 text-brand-500 shrink-0" />

@@ -85,7 +85,7 @@ export default function TermsPage() {
 
           <Section title="九、联系我们">
             <ul className="list-disc space-y-1.5 pl-5">
-              <li>邮箱：contact@yanglaoai999.com</li>
+              <li>邮箱：yanceai@163.com</li>
               <li>咨询表单：/contact</li>
               <li>隐私相关请参见《隐私政策》：/privacy</li>
             </ul>

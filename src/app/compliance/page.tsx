@@ -188,7 +188,7 @@ export default function CompliancePage() {
               </div>
               <div>
                 <p className="text-xs text-text-muted">邮箱</p>
-                <p className="text-sm font-medium text-text-primary">contact@yanglaoai999.com</p>
+                <p className="text-sm font-medium text-text-primary">yanceai@163.com</p>
               </div>
             </div>
             <a href="/contact" className="yc-card flex items-center gap-3 transition-colors hover:border-brand-300">
