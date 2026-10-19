@@ -109,14 +109,22 @@ export default function Footer() {
             <p className="text-xs text-text-muted">
               &copy; {new Date().getFullYear()} 上海衍策引擎人工智能科技有限公司
             </p>
-            <a
-              href="https://beian.miit.gov.cn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-text-muted hover:text-brand-600"
-            >
-              沪ICP备2026045851号-5
-            </a>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <a
+                href="mailto:yanceai@163.com"
+                className="text-xs text-text-muted hover:text-brand-600"
+              >
+                客服邮箱：yanceai@163.com
+              </a>
+              <a
+                href="https://beian.miit.gov.cn/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-text-muted hover:text-brand-600"
+              >
+                沪ICP备2026045851号-5
+              </a>
+            </div>
           </div>
 
           {/* Disclaimer */}
