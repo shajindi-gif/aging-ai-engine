@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { canAccessElder, elderScopeWhere } from "@/lib/authz/elder-access";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -57,7 +58,12 @@ export async function GET(request: NextRequest) {
 
     // Build dynamic where clause
     const where: Record<string, unknown> = {};
-    if (elderlyId) where.elderlyId = elderlyId;
+    if (elderlyId) {
+      if (!(await canAccessElder(session as any, elderlyId))) return NextResponse.json({ success: false, error: "记录不存在或无权访问" }, { status: 404 });
+      where.elderlyId = elderlyId;
+    } else {
+      where.elderly = await elderScopeWhere(session as any);
+    }
     if (careOrderId) where.careOrderId = careOrderId;
     if (recordType) where.recordType = recordType;
 
@@ -141,6 +147,10 @@ export async function POST(request: NextRequest) {
         { success: false, error: "Care order not found" },
         { status: 404 },
       );
+    }
+
+    if (!(await canAccessElder(session as any, careOrder.elderlyId))) {
+      return NextResponse.json({ success: false, error: "无权为该老人添加服务记录" }, { status: 403 });
     }
 
     const record = await prisma.serviceRecord.create({

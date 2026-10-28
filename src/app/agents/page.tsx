@@ -28,7 +28,7 @@ interface AgentResult {
 }
 
 const mockOutputs: Record<string, AgentResult> = {
-  policy_match: { output: JSON.stringify({ matched_policies: 5, top_match: "上海市高龄老人津贴", score: 92, estimated_benefit: "每月300元", next_steps: ["前往街道社区事务受理中心", "携带身份证和户口本"] }, null, 2), confidence: 0.91, sources: ["上海市民政局官网", "政策数据库 v2024.10"], requiresReview: false },
+  policy_match: { output: JSON.stringify({ matched_policies: 5, top_match: "上海市高龄老人津贴", score: 92, estimated_benefit: "每月300元", next_steps: ["前往街道社区事务受理中心", "携带身份证和户口本"] }, null, 2), confidence: 0.91, sources: ["示例文案，非真实数据来源", "政策数据库 v2024.10"], requiresReview: false },
   family_report: { output: JSON.stringify({ elder: "王秀兰", period: "2024-10-07 ~ 2024-10-13", services: 3, health_status: "稳定", highlights: ["血压正常", "血糖偏高需关注"], recommendations: ["控制碳水摄入", "按时服药"] }, null, 2), confidence: 0.88, sources: ["服务记录系统", "健康监测数据"], requiresReview: true },
   institution_profile: { output: JSON.stringify({ name: "上海和熹颐养院", maturity_level: "L3", score: 72, strengths: ["信息系统完善", "服务数字化程度高"], weaknesses: ["数据管理待提升", "员工技术采用率偏低"], recommendation: "推荐数据中台+智能床垫方案" }, null, 2), confidence: 0.85, sources: ["机构数据库", "行业报告"], requiresReview: false },
   risk_assessment: { output: JSON.stringify({ elder: "李国华", risk_level: "高", risks: ["血氧饱和度低于90%风险", "多药并用相互作用"], urgent_actions: ["密切监测血氧", "药物相互作用检查"], follow_up: "建议48小时内复诊" }, null, 2), confidence: 0.93, sources: ["健康档案", "用药记录", "最近就诊记录"], requiresReview: true },
@@ -63,6 +63,13 @@ export default function AgentsPage() {
     <>
       <Header />
 
+      {/* Demo notice */}
+      <div className="border-b border-gold-200 bg-gold-50">
+        <div className="mx-auto max-w-7xl px-4 py-3 text-center text-sm font-medium text-gold-700 sm:px-6 lg:px-8">
+          本页为产品概念演示，所示任务与输出均为预置示例，非真实 AI 运行结果
+        </div>
+      </div>
+
       <section className="bg-surface-secondary py-10 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <span className="yc-badge yc-badge-brand">照护助手</span>
@@ -77,9 +84,10 @@ export default function AgentsPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {agentDefs.map((agent) => (
               <div key={agent.id} onClick={() => { setSelectedAgent(agent.id); setResult(null); setInput(""); }}
-                className={cn("yc-card cursor-pointer transition-all hover:shadow-md",
+                className={cn("yc-card relative cursor-pointer transition-all hover:shadow-md",
                   selectedAgent === agent.id ? "ring-2 ring-brand-400 border-brand-300" : ""
                 )}>
+                <span className="absolute right-3 top-3 rounded bg-gold-50 px-1.5 py-0.5 text-[10px] font-medium text-gold-700">演示</span>
                 <div className={cn("mb-3 flex h-11 w-11 items-center justify-center rounded-lg", agent.color)}>
                   <agent.icon className="h-5 w-5" />
                 </div>
@@ -133,7 +141,7 @@ export default function AgentsPage() {
                     </span>
                   </div>
                   <div>
-                    <p className="text-xs text-text-muted mb-1">数据来源</p>
+                    <p className="text-xs text-text-muted mb-1">示例文案，非真实数据来源</p>
                     <div className="flex flex-wrap gap-1.5">
                       {result.sources.map((s) => (
                         <span key={s} className="rounded bg-silver-50 px-2 py-0.5 text-xs text-text-muted">{s}</span>
@@ -170,7 +178,10 @@ export default function AgentsPage() {
                 {recentTasks.map((task) => (
                   <tr key={task.id} className="border-b border-border last:border-0">
                     <td className="px-4 py-3 text-text-primary">{task.id}</td>
-                    <td className="px-4 py-3 text-text-secondary">{task.type}</td>
+                    <td className="px-4 py-3 text-text-secondary">
+                      <span className="mr-1.5 rounded bg-gold-50 px-1.5 py-0.5 text-[10px] font-medium text-gold-700 align-middle">演示</span>
+                      {task.type}
+                    </td>
                     <td className="px-4 py-3">
                       <span className={cn("yc-badge text-xs",
                         task.status === "completed" ? "bg-green-50 text-green-700" : "bg-gold-50 text-gold-700"

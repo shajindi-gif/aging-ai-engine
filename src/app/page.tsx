@@ -301,11 +301,11 @@ export default function HomePage() {
                 <h3 className="text-base font-semibold text-text-primary">机构管理系统 · 专业版</h3>
                 <p className="mt-1 text-3xl font-bold text-text-primary">¥2,980<span className="text-base font-normal text-text-muted"> / 月</span></p>
                 <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                  老人档案、订单管理、护理记录、家属报告、健康风险看板，支持团队使用。当前通过在线支付开通（微信/支付宝），也可先联系我们试用评估。
+                  老人档案、订单管理、护理记录、家属报告、健康风险看板，支持团队使用。支付通道已就绪；当前为人工开通：先咨询后开通。
                 </p>
                 <div className="mt-5 flex gap-3">
-                  <Link href="/checkout/new?product=pro-monthly" className="yc-btn-primary flex-1 justify-center">在线购买</Link>
-                  <Link href="/contact" className="yc-btn-secondary flex-1 justify-center">先咨询</Link>
+                  <Link href="/contact" className="yc-btn-primary flex-1 justify-center">咨询开通</Link>
+                  <Link href="/pricing" className="yc-btn-secondary flex-1 justify-center">查看定价</Link>
                 </div>
               </div>
             </div>

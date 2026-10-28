@@ -7,6 +7,14 @@ import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { computeTrends, detectTrendAlerts, type DailyVitals } from "@/lib/silvercare/trend-engine";
 
+import { canAccessElder, elderScopeWhere } from "@/lib/authz/elder-access";
+async function assertElder(elderlyId: string) {
+  const s = await auth();
+  if (!s) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!(await canAccessElder(s as any, elderlyId))) return NextResponse.json({ success: false, error: "老人档案不存在或无权访问" }, { status: 404 });
+  return null;
+}
+
 async function requireSession() {
   const session = await auth();
   if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
@@ -43,6 +51,8 @@ export async function GET(request: NextRequest) {
   if (denied) return denied;
   const elderlyId = new URL(request.url).searchParams.get("elderlyId");
   if (!elderlyId) return NextResponse.json({ success: false, error: "缺少 elderlyId" }, { status: 400 });
+  const __g2 = await assertElder(elderlyId); if (__g2) return __g2;
+  const __g = await assertElder(elderlyId); if (__g) return __g;
   const list = await prisma.chronicMetric.findMany({
     where: { elderlyId },
     orderBy: { metricDate: "desc" },

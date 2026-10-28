@@ -7,6 +7,14 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 
+import { canAccessElder, elderScopeWhere } from "@/lib/authz/elder-access";
+async function assertElder(elderlyId: string) {
+  const s = await auth();
+  if (!s) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!(await canAccessElder(s as any, elderlyId))) return NextResponse.json({ success: false, error: "老人档案不存在或无权访问" }, { status: 404 });
+  return null;
+}
+
 const TYPES = ["VITALS_BP", "VITALS_SPO2", "MEDICATION", "REHAB", "WALK", "WATER", "CLINIC", "FOLLOWUP", "FAMILY_CONTACT", "CAREGIVER_VISIT", "OTHER"];
 const STATUSES = ["PENDING", "COMPLETED", "MISSED", "CANCELLED"];
 
@@ -23,6 +31,7 @@ export async function GET(request: NextRequest) {
   const elderlyId = sp.get("elderlyId");
   const status = sp.get("status");
   if (!elderlyId) return NextResponse.json({ success: false, error: "缺少 elderlyId" }, { status: 400 });
+  const __g = await assertElder(elderlyId); if (__g) return __g;
   const tasks = await prisma.careTask.findMany({
     where: { elderlyId, ...(status ? { status } : {}) },
     orderBy: [{ scheduledTime: "asc" }, { createdAt: "desc" }],
@@ -48,6 +57,7 @@ export async function POST(request: NextRequest) {
   try {
     const b = await request.json();
     if (!b.elderlyId || !b.title) return NextResponse.json({ success: false, error: "参数不完整" }, { status: 400 });
+    const __gp = await assertElder(b.elderlyId); if (__gp) return __gp;
     const task = await prisma.careTask.create({
       data: {
         elderlyId: b.elderlyId,
@@ -73,6 +83,12 @@ export async function PATCH(request: NextRequest) {
     const b = await request.json();
     if (!b.id) return NextResponse.json({ success: false, error: "缺少任务 id" }, { status: 400 });
     const status = STATUSES.includes(b.status) ? b.status : "PENDING";
+    const existing = await prisma.careTask.findUnique({ where: { id: b.id }, select: { elderlyId: true, status: true } });
+    if (!existing) return NextResponse.json({ success: false, error: "任务不存在" }, { status: 404 });
+    const __gt = await assertElder(existing.elderlyId); if (__gt) return __gt;
+    const ALLOWED_FROM = { PENDING: ["COMPLETED", "MISSED", "CANCELLED"], MISSED: ["CANCELLED", "COMPLETED"], COMPLETED: [], CANCELLED: [] };
+    if (status !== existing.status && !(ALLOWED_FROM[existing.status] || []).includes(status))
+      return NextResponse.json({ success: false, error: `不允许的状态流转：${existing.status} → ${status}` }, { status: 400 });
     const task = await prisma.careTask.update({
       where: { id: b.id },
       data: { status, completedAt: status === "COMPLETED" ? new Date() : null },

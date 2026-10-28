@@ -5,6 +5,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+
+import { canAccessElder, elderScopeWhere } from "@/lib/authz/elder-access";
+async function assertElder(elderlyId: string) {
+  const s = await auth();
+  if (!s) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!(await canAccessElder(s as any, elderlyId))) return NextResponse.json({ success: false, error: "老人档案不存在或无权访问" }, { status: 404 });
+  return null;
+}
 import { runCareAgent } from "@/lib/silvercare/agent";
 
 async function requireSession() {
@@ -18,6 +26,7 @@ export async function GET(request: NextRequest) {
   if (denied) return denied;
   const elderlyId = new URL(request.url).searchParams.get("elderlyId");
   if (!elderlyId) return NextResponse.json({ success: false, error: "缺少 elderlyId" }, { status: 400 });
+  const __g = await assertElder(elderlyId); if (__g) return __g;
   const run = await prisma.careAgentRun.findFirst({
     where: { elderlyId },
     orderBy: { createdAt: "desc" },
@@ -31,6 +40,7 @@ export async function POST(request: NextRequest) {
   try {
     const b = await request.json();
     if (!b.elderlyId) return NextResponse.json({ success: false, error: "缺少 elderlyId" }, { status: 400 });
+    const __gp = await assertElder(b.elderlyId); if (__gp) return __gp;
     const result = await runCareAgent(b.elderlyId);
     return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (error) {

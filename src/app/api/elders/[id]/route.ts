@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { apiSuccess, apiError } from "@/lib/api-response";
+import { canAccessElder } from "@/lib/authz/elder-access";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -37,6 +38,11 @@ export async function GET(
     }
 
     const { id } = await params;
+
+    // P0 对象级授权：无权访问时按「不存在」处理（404，不泄露档案存在性）
+    if (!(await canAccessElder(session as any, id))) {
+      return apiError("未找到该老人档案", 404);
+    }
 
     const elder = await prisma.elderlyProfile.findUnique({
       where: { id },

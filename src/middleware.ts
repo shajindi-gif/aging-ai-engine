@@ -6,8 +6,8 @@ const publicPaths = [
   '/compliance', '/trust', '/privacy', '/terms', '/demo', '/docs', '/developers',
   '/login/forgot', '/verify-email',
   '/tools', '/templates', '/solutions', '/resources', '/city',
-  '/policies', '/institutions', '/care-crm', '/care-orders',
-  '/care-records', '/policy-match', '/elders', '/agents',
+  '/policies', '/institutions', '/policy-match', '/agents',
+  // P0 路由收敛：业务数据页（care-crm/care-orders/care-records/elders）从匿名白名单移除，统一走登录态
 ]
 
 const isPublicPath = (pathname: string) => {

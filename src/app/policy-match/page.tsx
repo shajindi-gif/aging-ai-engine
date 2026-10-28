@@ -48,7 +48,7 @@ export default function PolicyMatchPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <span className="yc-badge yc-badge-brand">智能匹配</span>
           <h1 className="mt-3 text-2xl font-bold text-text-primary sm:text-3xl lg:text-4xl">养老补贴智能匹配</h1>
-          <p className="mt-2 text-text-secondary max-w-2xl mx-auto">输入老人基本信息，AI 智能匹配可享受的养老补贴和政策</p>
+          <p className="mt-2 text-text-secondary max-w-2xl mx-auto">输入老人基本信息，按您的条件查询可能适用的补贴（结果仅供参考，资格以主管部门审核为准）</p>
         </div>
       </section>
 

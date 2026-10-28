@@ -86,6 +86,9 @@ export default function InstitutionsPage() {
               <span className="yc-badge yc-badge-brand">销售线索</span>
               <h1 className="mt-3 text-2xl font-bold text-text-primary sm:text-3xl">养老机构销售线索库</h1>
               <p className="mt-2 text-xs text-text-muted">线索导出功能开发中，当前可在线浏览与筛选。</p>
+              <div className="mt-4 max-w-3xl rounded-lg border border-border bg-silver-50 px-4 py-3 text-xs leading-relaxed text-text-secondary">
+                机构信息为公开资料与演示样例混合的示例库，联系电话与联系人为虚构样例，正式收录与核验进行中。
+              </div>
             </div>
           </div>
         </div>
@@ -139,7 +142,10 @@ export default function InstitutionsPage() {
                         <div key={lead.id} onClick={() => setSelectedId(lead.institutionId)}
                           className="yc-card cursor-pointer hover:shadow-md transition-shadow !p-3">
                           <p className="text-sm font-medium text-text-primary truncate">{lead.institutionName}</p>
-                          <p className="text-xs text-text-muted mt-1">{lead.contactName} · {lead.contactRole}</p>
+                          <p className="text-xs text-text-muted mt-1">
+                            <span className="mr-1 rounded bg-silver-100 px-1.5 py-0.5 text-[10px] font-medium text-silver-600">示例</span>
+                            {lead.contactName} · {lead.contactRole}
+                          </p>
                           {lead.estimatedValue && (
                             <p className="text-xs text-brand-600 mt-1 font-medium">¥{lead.estimatedValue.toLocaleString()}</p>
                           )}
@@ -204,7 +210,7 @@ export default function InstitutionsPage() {
               <div><span className="text-text-muted">价格区间:</span> <span className="text-text-primary">¥{detail.priceMin}-{detail.priceMax}/{detail.priceUnit === "DAY" ? "日" : "月"}</span></div>
               <div><span className="text-text-muted">评分:</span> <span className="text-text-primary">{detail.rating ?? "-"}</span></div>
               <div><span className="text-text-muted">成立年份:</span> <span className="text-text-primary">{detail.establishedYear ?? "-"}</span></div>
-              <div><span className="text-text-muted">联系人:</span> <span className="text-text-primary">{detail.contactName ?? "-"} {detail.contactPhone ?? ""}</span></div>
+              <div><span className="text-text-muted">联系人:</span> <span className="mr-1 rounded bg-silver-100 px-1.5 py-0.5 text-[10px] font-medium text-silver-600">示例</span><span className="text-text-primary">{detail.contactName ?? "-"} {detail.contactPhone ?? ""}</span></div>
             </div>
             {(detail.services ?? []).length > 0 && (
               <div className="mt-4">

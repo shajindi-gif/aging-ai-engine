@@ -51,6 +51,9 @@ const categoryLabels: Record<string, string> = {
   medical: "医疗", employment: "就业", tax: "税收", other: "其他",
 };
 
+// 判断 sourceUrl 是否为可信官方链接（空链接或含 policy- 的合成链接均视为样本条目）
+const isRealSourceUrl = (url?: string | null) => !!url && !url.includes("policy-");
+
 export default function PoliciesPage() {
   const [search, setSearch] = useState("");
   const [region, setRegion] = useState("全部");
@@ -208,10 +211,12 @@ export default function PoliciesPage() {
                         )}
                       </span>
                       <span className="flex items-center gap-3">
-                        {policy.sourceUrl && (
+                        {isRealSourceUrl(policy.sourceUrl) ? (
                           <a href={policy.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs text-text-muted underline-offset-2 hover:text-brand-600 hover:underline" title="查看官方原文">
                             原文
                           </a>
+                        ) : (
+                          <span className="text-xs text-text-muted" title="样本条目，暂无官方原文链接">暂无官方原文链接</span>
                         )}
                         <button
                           onClick={() => setSelectedPolicy(policy.id)}
@@ -269,7 +274,7 @@ export default function PoliciesPage() {
             <div className="mt-4 rounded-lg bg-silver-50 px-4 py-3 text-xs leading-relaxed text-text-secondary">
               <p>发布部门：{detail.department ?? "待核实"}</p>
               <p className="mt-1">生效日期：{detail.effectiveDate ? new Date(detail.effectiveDate).toLocaleDateString("zh-CN") : "待核实"}{detail.expiryDate ? ` · 有效期至 ${new Date(detail.expiryDate).toLocaleDateString("zh-CN")}` : ""}</p>
-              <p className="mt-1">最近核验：2026-09-27（样本库）{detail.sourceUrl ? " · " : ""}{detail.sourceUrl && (<a href={detail.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-brand-600 hover:underline"><ExternalLink className="h-3 w-3" aria-hidden="true" />查看官方原文</a>)}</p>
+              <p className="mt-1">最近核验：2026-09-27（样本库）{isRealSourceUrl(detail.sourceUrl) ? " · " : " · 样本条目 · 暂无官方原文链接"}{detail.sourceUrl && isRealSourceUrl(detail.sourceUrl) && (<a href={detail.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-brand-600 hover:underline"><ExternalLink className="h-3 w-3" aria-hidden="true" />查看官方原文</a>)}</p>
               <p className="mt-1.5 text-text-muted">注意：以上为整理信息，可能滞后于政策变化；申请前请以官方原文和主管部门答复为准。</p>
             </div>
 

@@ -20,6 +20,9 @@ export async function OPTIONS() {
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
+    if (session && !(await import("@/lib/authz/elder-access")).isPlatformStaff(session as any)) {
+      return apiError("仅平台运营可查看销售线索", 403);
+    }
     if (!session) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },

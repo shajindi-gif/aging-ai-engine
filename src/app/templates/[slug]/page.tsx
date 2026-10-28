@@ -66,15 +66,14 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ slug:
         <div className="lg:col-span-2 space-y-4">
           <div className="yc-card p-6 text-center">
             <h3 className="text-sm font-semibold">使用此模板</h3>
-            <p className="mt-1 text-xs text-[var(--color-text-muted)]">输入信息，一键生成专业文档</p>
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">登录后输入信息，生成专业文档</p>
             <div className="mt-4 space-y-2">
-              <button className="yc-btn-primary w-full py-2.5 text-sm">一键生成</button>
-              <button className="yc-btn-secondary w-full text-xs">保存到 SaaS 后台</button>
+              <a href="/login?mode=code" className="yc-btn-primary w-full py-2.5 text-sm">登录后使用</a>
             </div>
           </div>
           <div className="yc-card border-[var(--color-brand-200)] bg-[var(--color-brand-50)] p-6 text-center">
             <h3 className="text-sm font-semibold">升级专业版</h3>
-            <p className="mt-1 text-xs text-[var(--color-text-muted)]">解锁全部 35 个模板、自定义字段、批量生成、PDF 导出</p>
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">查看全部模板、自定义字段、批量生成、PDF 导出</p>
             <a href="/pricing" className="yc-btn-primary mt-3 inline-block text-xs">查看定价</a>
           </div>
         </div>

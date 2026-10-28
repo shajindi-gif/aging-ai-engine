@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { elderScopeWhere, canAccessElder } from "@/lib/authz/elder-access";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -123,7 +124,14 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = {};
     if (status) where.status = status;
     if (type) where.type = type;
-    if (elderlyId) where.elderlyId = elderlyId;
+    // P0 对象级授权：仅可见自己/本机构老人相关订单
+    const scope: any = await elderScopeWhere(session as any);
+    if (elderlyId) {
+      if (!(await canAccessElder(session as any, elderlyId))) return NextResponse.json({ success: false, error: "订单不存在或无权访问" }, { status: 404 });
+      where.elderlyId = elderlyId;
+    } else if (scope && Object.keys(scope).length) {
+      where.elderly = scope;
+    }
     if (organizationId) where.organizationId = organizationId;
 
     const [careOrders, total] = await Promise.all([
@@ -187,6 +195,10 @@ export async function POST(request: NextRequest) {
     }
 
     const data = parsed.data;
+    // P0：只能为有权访问的老人创建订单
+    if (!(await canAccessElder(session as any, data.elderlyId))) {
+      return NextResponse.json({ success: false, error: "无权为该老人创建订单" }, { status: 403 });
+    }
     const orderNo = await generateOrderNo();
 
     const careOrder = await prisma.careOrder.create({

@@ -77,10 +77,9 @@ export default function SolutionDetailPage({ params }: { params: Promise<{ slug:
           </div>
         </div>
 
-        {/* Demo screenshot placeholder */}
-        <div className="rounded-xl border-2 border-dashed border-[var(--color-border)] bg-[var(--color-silver-50)] p-12 text-center">
-          <span className="text-4xl">🖥️</span>
-          <p className="mt-3 text-sm text-[var(--color-text-muted)]">Demo 截图占位</p>
+        {/* Demo screenshot notice */}
+        <div className="rounded-xl bg-surface-secondary p-8 text-center">
+          <p className="text-sm text-[var(--color-text-secondary)]">产品界面截图整理中——可预约人工演示查看真实后台。</p>
         </div>
 
         {/* Pricing */}

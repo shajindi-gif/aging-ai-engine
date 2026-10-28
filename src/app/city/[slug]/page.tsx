@@ -25,33 +25,36 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
         {/* City overview */}
         <div className="yc-card p-6">
           <h2 className="text-base font-semibold">{city.name}养老概况</h2>
-          <p className="mt-2 text-sm text-[var(--color-text-secondary)] leading-relaxed">{city.policySummary}</p>
+          <p className="mt-2 text-sm text-[var(--color-text-secondary)] leading-relaxed">
+            {city.policySummary}
+            <span className="text-text-muted">（整理中，以官方公布为准）</span>
+          </p>
         </div>
 
         {/* Policy details */}
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="yc-card p-5">
             <h3 className="text-sm font-semibold">🎂 高龄津贴</h3>
-            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.elderlyAllowance}</p>
+            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.elderlyAllowance}<span className="text-text-muted">（整理中，以官方公布为准）</span></p>
           </div>
           <div className="yc-card p-5">
             <h3 className="text-sm font-semibold">🏥 长期护理保险</h3>
-            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.longTermCare}</p>
+            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.longTermCare}<span className="text-text-muted">（整理中，以官方公布为准）</span></p>
           </div>
           <div className="yc-card p-5">
             <h3 className="text-sm font-semibold">🔧 适老化改造</h3>
-            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.homeModification}</p>
+            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.homeModification}<span className="text-text-muted">（整理中，以官方公布为准）</span></p>
           </div>
           <div className="yc-card p-5">
             <h3 className="text-sm font-semibold">🍽️ 社区助餐</h3>
-            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.communityMeal}</p>
+            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.communityMeal}<span className="text-text-muted">（整理中，以官方公布为准）</span></p>
           </div>
         </div>
 
         {/* Home care */}
         <div className="yc-card p-5">
           <h3 className="text-sm font-semibold">🏠 居家养老服务</h3>
-          <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.homeCare}</p>
+          <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{city.homeCare}<span className="text-text-muted">（整理中，以官方公布为准）</span></p>
         </div>
 
         {/* Institution types */}

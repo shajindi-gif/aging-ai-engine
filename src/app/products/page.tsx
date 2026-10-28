@@ -25,11 +25,11 @@ const mvpProducts = [
     badgeColor: "yc-badge-brand",
     targetUsers: ["政府部门", "社区服务站", "养老公司", "老人家庭"],
     description:
-      "覆盖全国200+城市养老政策，AI智能匹配补贴资格，一键生成申请指南。帮助老人家庭快速找到可享受的政策福利。",
+      "已收录 41 条已核验政策样本，覆盖 10 个地区，持续扩充中。按条件筛选可能适用的补贴，生成申请指南，帮助老人家庭了解可享受的政策福利（资格以主管部门审核为准）。",
     features: [
-      "覆盖200+城市养老政策法规",
-      "AI智能补贴资格匹配引擎",
-      "一键生成申请清单和材料列表",
+      "已收录 41 条已核验政策样本，覆盖 10 个地区，持续扩充中",
+      "按条件筛选可能适用的补贴",
+      "生成申请清单和材料列表",
       "政策变更实时推送通知",
       "多维度筛选和搜索",
       "政策详情结构化展示",
@@ -222,7 +222,7 @@ export default function ProductsPage() {
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/dashboard"
+              href="/login?mode=code"
               className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-brand-700 shadow-lg transition-all hover:bg-brand-50"
             >
               免费试用

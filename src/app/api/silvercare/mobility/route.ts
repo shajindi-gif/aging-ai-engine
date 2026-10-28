@@ -5,6 +5,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+
+import { canAccessElder, elderScopeWhere } from "@/lib/authz/elder-access";
+async function assertElder(elderlyId: string) {
+  const s = await auth();
+  if (!s) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!(await canAccessElder(s as any, elderlyId))) return NextResponse.json({ success: false, error: "老人档案不存在或无权访问" }, { status: 404 });
+  return null;
+}
 import { computeFallRisk } from "@/lib/silvercare/risk-engine";
 
 async function requireSession() {
@@ -18,6 +26,7 @@ export async function GET(request: NextRequest) {
   if (denied) return denied;
   const elderlyId = new URL(request.url).searchParams.get("elderlyId");
   if (!elderlyId) return NextResponse.json({ success: false, error: "缺少 elderlyId" }, { status: 400 });
+  const __g = await assertElder(elderlyId); if (__g) return __g;
   const list = await prisma.mobilityAssessment.findMany({
     where: { elderlyId },
     orderBy: { createdAt: "desc" },
@@ -40,6 +49,7 @@ export async function POST(request: NextRequest) {
     if (!elderlyId || !["STS", "WALK", "BALANCE"].includes(testType)) {
       return NextResponse.json({ success: false, error: "参数不完整" }, { status: 400 });
     }
+    const __g2 = await assertElder(elderlyId); if (__g2) return __g2;
 
     const assessment = await prisma.mobilityAssessment.create({
       data: {

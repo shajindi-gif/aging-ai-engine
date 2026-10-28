@@ -21,6 +21,11 @@ export async function OPTIONS() {
 
 export async function GET(request: NextRequest) {
   try {
+    const { auth } = await import("@/lib/auth");
+    const { isPlatformStaff } = await import("@/lib/authz/elder-access");
+    const session = await auth();
+    if (!session) return apiError("Unauthorized", 401);
+    if (!isPlatformStaff(session as any)) return apiError("仅平台运营可查看线索", 403);
     const { searchParams } = new URL(request.url);
     const followUpStatus = searchParams.get("followUpStatus");
     const leadType = searchParams.get("leadType");

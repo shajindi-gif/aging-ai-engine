@@ -6,6 +6,14 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 
+import { canAccessElder, elderScopeWhere } from "@/lib/authz/elder-access";
+async function assertElder(elderlyId: string) {
+  const s = await auth();
+  if (!s) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!(await canAccessElder(s as any, elderlyId))) return NextResponse.json({ success: false, error: "老人档案不存在或无权访问" }, { status: 404 });
+  return null;
+}
+
 async function requireSession() {
   const session = await auth();
   if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
@@ -17,11 +25,12 @@ export async function GET(request: NextRequest) {
   if (denied) return denied;
   const sp = new URL(request.url).searchParams;
   const elderlyId = sp.get("elderlyId");
+  if (elderlyId) { const __g = await assertElder(elderlyId); if (__g) return __g; }
   const status = sp.get("status");
   const level = sp.get("level");
   const alerts = await prisma.healthAlert.findMany({
     where: {
-      ...(elderlyId ? { elderlyId } : {}),
+      ...(elderlyId ? { elderlyId } : { elderly: await elderScopeWhere((await auth()) as any) }),
       ...(status ? { status } : {}),
       ...(level ? { level: Number(level) } : {}),
     },

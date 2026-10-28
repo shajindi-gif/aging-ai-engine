@@ -3,6 +3,7 @@ import { z } from "zod";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { apiSuccess, apiError } from "@/lib/api-response";
+import { elderScopeWhere, isPlatformStaff } from "@/lib/authz/elder-access";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -85,6 +86,9 @@ export async function GET(request: NextRequest) {
       where.name = { contains: search, mode: "insensitive" };
     }
 
+    // P0 对象级授权：非平台角色仅可见自己创建或本机构的老人档案
+    Object.assign(where, await elderScopeWhere(session as any));
+
     const [elders, total] = await Promise.all([
       prisma.elderlyProfile.findMany({
         where,
@@ -154,8 +158,9 @@ export async function POST(request: NextRequest) {
         incomeLevel: data.incomeLevel,
         disabilityLevel: data.disabilityLevel,
         tags: data.tags,
-        organizationId: data.organizationId,
-        userId: data.userId,
+        // P0：归属权由服务端强制——普通账户建的档案归属自己；机构绑定仅平台角色可指定
+        organizationId: isPlatformStaff(session as any) ? data.organizationId : undefined,
+        userId: isPlatformStaff(session as any) ? (data.userId || session.user!.id) : session.user!.id,
       },
     });
 

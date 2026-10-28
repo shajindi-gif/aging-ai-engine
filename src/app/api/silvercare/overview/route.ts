@@ -3,6 +3,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+
+import { canAccessElder, elderScopeWhere } from "@/lib/authz/elder-access";
+async function assertElder(elderlyId: string) {
+  const s = await auth();
+  if (!s) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!(await canAccessElder(s as any, elderlyId))) return NextResponse.json({ success: false, error: "老人档案不存在或无权访问" }, { status: 404 });
+  return null;
+}
 import { computeTrends, detectTrendAlerts, type DailyVitals } from "@/lib/silvercare/trend-engine";
 
 export async function GET() {
@@ -10,6 +18,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   try {
     const elders = await prisma.elderlyProfile.findMany({
+      where: await elderScopeWhere((await auth()) as any),
       orderBy: { createdAt: "asc" },
       take: 200,
       include: { medications: true },

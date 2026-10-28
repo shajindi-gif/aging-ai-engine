@@ -23,7 +23,7 @@ export const mockTools: Tool[] = [
     ],
     relatedTools: ["policy-materials-generator", "elder-risk-check"],
   },
-  { id: "tool-2", slug: "family-care-report", name: "家属照护报告生成器", description: "根据近期护理记录和健康数据，一键生成家属周报/月报", category: "care",
+  { id: "tool-2", slug: "family-care-report", name: "家属照护报告生成器", description: "根据近期护理记录和健康数据，快速生成家属周报/月报", category: "care",
     seoTitle: "家属照护报告生成器 — 自动生成老人健康周报，让子女安心",
     inputFields: [
       { key: "elderName", label: "老人姓名", type: "text", placeholder: "如：张大爷" },
@@ -35,7 +35,7 @@ export const mockTools: Tool[] = [
     relatedTools: ["medical-companion-summary", "care-plan-generator"],
   },
   { id: "tool-3", slug: "medical-companion-summary", name: "陪诊记录总结器", description: "将就诊信息快速结构化为标准陪诊记录", category: "care",
-    seoTitle: "陪诊记录总结器 — 一键生成结构化陪诊报告",
+    seoTitle: "陪诊记录总结器 — 快速生成结构化陪诊报告",
     inputFields: [
       { key: "hospitalName", label: "就诊医院", type: "text", placeholder: "如：上海瑞金医院" },
       { key: "department", label: "就诊科室", type: "text", placeholder: "如：心内科" },
@@ -86,7 +86,7 @@ export const mockTools: Tool[] = [
     relatedTools: ["subsidy-checker", "care-plan-generator"],
   },
   { id: "tool-8", slug: "home-aging-modification-checklist", name: "适老化改造清单生成器", description: "根据居住环境生成适老化改造建议和预算参考", category: "care",
-    seoTitle: "适老化改造清单生成器 — 居家养老改造方案一键生成",
+    seoTitle: "适老化改造清单生成器 — 居家养老改造方案快速生成",
     inputFields: [
       { key: "houseType", label: "房屋类型", type: "select", options: ["一居室","二居室","三居室及以上","农村自建房"] },
       { key: "floor", label: "楼层", type: "select", options: ["一楼","低层(2-6)","高层(7+)","有电梯","无电梯"] },
@@ -106,7 +106,7 @@ export const mockTools: Tool[] = [
     relatedTools: ["policy-materials-generator"],
   },
   { id: "tool-10", slug: "policy-materials-generator", name: "政策申报材料清单生成器", description: "根据目标政策生成所需申报材料清单", category: "policy",
-    seoTitle: "政策申报材料清单生成器 — 一键了解补贴申请所需材料",
+    seoTitle: "政策申报材料清单生成器 — 快速了解补贴申请所需材料",
     inputFields: [
       { key: "policyType", label: "政策类型", type: "select", options: ["高龄津贴","长期护理保险","适老化改造","社区助餐","居家养老服务","失能老人照护","养老机构补贴"] },
       { key: "city", label: "所在城市", type: "select", options: ["上海","北京","深圳","杭州","苏州","广州","成都","武汉","南京"] },

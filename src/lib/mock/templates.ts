@@ -81,7 +81,7 @@ export const mockTemplates: Template[] = [
   { id: "tpl-32", slug: "sales-followup-plan", name: "护理设备客户跟进计划", description: "对已接触客户的系统跟进计划", category: "sales", targetAudience: "护理设备企业", useCase: "客户跟进管理",
     inputFields: ["客户名称","接触阶段","需求","竞品","预算","决策人"], outputSample: "跟进计划：XX养老院，已首次演示。需求：护理呼叫系统。预算20万。决策人：李院长。下一步：7月5日二次演示+试用方案。" },
   { id: "tpl-33", slug: "sales-b2b-email", name: "银发经济B2B销售邮件", description: "面向银发经济企业的冷启动邮件", category: "sales", targetAudience: "银发经济企业", useCase: "新客户冷启动触达",
-    inputFields: ["目标公司","联系人","产品卖点","行业痛点"], outputSample: "邮件：李总您好，我是衍策银龄AI的XX。注意到贵公司在智慧养老领域...我们的AI政策匹配引擎已帮助30+机构提升补贴申请效率60%..." },
+    inputFields: ["目标公司","联系人","产品卖点","行业痛点"], outputSample: "邮件：李总您好，我是衍策银龄AI的XX。注意到贵公司在智慧养老领域...我们的政策匹配工具可帮助机构梳理可申请的补贴事项（示例文案，非真实案例数据）..." },
   { id: "tpl-34", slug: "sales-proposal-outline", name: "销售方案大纲", description: "为客户定制的解决方案提案框架", category: "sales", targetAudience: "销售团队", useCase: "正式提案准备",
     inputFields: ["客户名称","需求摘要","产品方案","价格","实施周期"], outputSample: "方案大纲：1.客户现状分析 2.解决方案概述 3.产品模块 4.实施计划(3个月) 5.投资回报 6.服务保障。总价：XX万/年。" },
   { id: "tpl-35", slug: "sales-exhibition-pitch", name: "展会推介话术", description: "养老行业展会快速推介话术", category: "sales", targetAudience: "销售团队、市场团队", useCase: "养老产业展会/论坛",
